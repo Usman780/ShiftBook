@@ -1,0 +1,233 @@
+﻿
+@{
+    ViewBag.Title = "ViewTypes";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<!--Add New Modal-->
+<div class="modal fade" id="AddNewModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Add New Type</h3>
+            </div>
+            <form method="post" action="@Url.Action("PostAddNewType", "Type")">
+                <div class="modal-body p-5">
+                    <div class="col-md-12  m-10">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 text-bold">Name <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" name="TypeName" class="form-control required" required="" placeholder="Electrical">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer pt-10">
+                    <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal-->
+<div class="modal fade" id="DeleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-danger">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Warning</h3>
+            </div>
+            <form method="post" action="@Url.Action("Delete", "Type")">
+                <div class="modal-body p-5">
+                    <h6 class="text-semibold">
+                        Do you really want to Delete this Type?<br />
+                        This Type is going to permanently delete from our System.<br />
+                        This Action Cannot be Undone.
+                    </h6>
+                    <input type="hidden" name="id" id="TypeDeleteId" />
+                </div>
+                <div class="modal-footer border-top-1 border-top-grey-800 pt-10">
+                    <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!--Update Modal-->
+<div class="modal fade" id="UpdateModal">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-success">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Update</h3>
+            </div>
+            <form method="post" action="@Url.Action("PostUpdate", "Type")">
+                <div class="modal-body p-5">
+                    <div class="col-md-12  m-10">
+                        <input type="hidden" name="Id" id="updId" value="" />
+                        <div class="form-group">
+                            <label class="control-label col-md-3 text-bold">Name <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" name="TypeName" id="updName" class="form-control required" required="required" placeholder="Electrical">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer pt-10">
+                    <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-success">Submit Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!--Form Modal-->
+<!-- row -->
+<div class="row row-sm ">
+    <div class="row">
+        <div class="col-lg-6 col-md-offset-3" id="ViewBagMessages">
+            @if (ViewBag.successfullmessage != "" && ViewBag.successfullmessage != null)
+            {
+                <div class="alert alert-success alert-styled-left alert-arrow-left alert-bordered">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    <span class="text-semibold">Complete!</span> @ViewBag.successfullmessage.
+                </div>
+            }
+            @if (ViewBag.errormessage != "" && ViewBag.errormessage != null)
+            {
+                <div class="alert alert-danger alert-styled-left alert-bordered">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    <span class="text-semibold">Oh snap!</span> @ViewBag.errormessage <span class="alert-link">try submitting again</span>.
+                </div>
+            }
+        </div>
+    </div>
+
+    <!--div-->
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-header pb-0 pt-10">
+                <div class="d-flex text-center">
+                    <h1 class=""><u>Type List</u></h1>
+                    <i class="mdi mdi-dots-horizontal text-gray"></i>
+                </div>
+                <div class="row pt-20">
+                    <div class="col-md-9 col-sm-12">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-2 col-sm-12 pull-right">
+                        <button class="btn btn-primary" onclick="AddNew()">Add New Type</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table text-md-nowrap table-striped table-bordered text-center" id="TypeTable">
+                        <thead class="bg-purple">
+                            <tr>
+                                <th class="text-center">Action</th>
+                                <th class="text-center">Type Name</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <!--/div-->
+</div>
+<!-- row closed -->
+
+<script>
+
+    $('#TypeTable').DataTable(
+    {
+        "ajax":
+        {
+            "url": '@Url.Action("GetTypesList", "Type")',
+            "type": "POST",
+            "datatype": "json",
+        },
+        'columns':
+            [
+                { "data": "Action", "name": "" },
+                { "data": "TypeName", "name": "TypeName" },
+            ],
+        'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    'className': 'col-lg-1',
+                    'searchable': false,
+                    'orderable': false,
+                    "render": function (data, type, full, meta) {
+                            return '<div class="btn-group" role="group">' +
+                                        '<a onclick="EditFunction(' + full.TypeId + ')" class="btn btn-info" title="Edit"><i class="icon-pencil"></i></a> ' +
+                                        '<a onclick="deleteFunction(' + full.TypeId + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-floppy-remove"></i></a>' +
+                                    '</div>';
+
+                    }
+                },
+                {
+                    "targets": 1,
+                    'className': 'col-lg-2',
+                    "render": function (data, type, full, meta) {
+                        return full.TypeName;
+                    }
+                },
+            ],
+        "serverSide": "true",
+        "processing": "true",
+        "language":
+        {
+            "processing": "<i class='icon-spinner spinner icon-3x'></i>",
+            "search": "<span>Search :</span> _INPUT_",
+            "searchPlaceholder": "Type to Filter",
+            "lengthMenu": "<span>Show :</span> _MENU_",
+            "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+        },
+    });
+
+    function deleteFunction(id) {
+        $("#TypeDeleteId").val(id);
+        $("#DeleteModal").modal('show');
+    }
+
+    function AddNew() {
+        $("#AddNewModal").modal('show');
+    }
+
+    function EditFunction(id) {
+        $.ajax({
+            type: 'POST',
+            url: "../Type/TypeById",
+            dataType: "json",
+            data: {
+                Id: id
+            },
+            success: function (response) {
+                $("#updId").val(response.Id);
+                $("#updName").val(response.TypeName);
+                $("#UpdateModal").modal('show');
+            },
+            error: function () {
+                alert("ajax Failed");
+            }
+        });
+    }
+
+</script>
+

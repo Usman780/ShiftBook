@@ -1,0 +1,411 @@
+﻿
+@{
+    ViewBag.Title = "View Equipment Codes";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+<img id="loadImg" src='../Content/assets/images/loading.gif' width='150' style="position:fixed; margin-top:20%; margin-left:35%; z-index:111; display:none" />
+
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-danger">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Warning</h3>
+            </div>
+            <div class="modal-body p-5">
+                <h6 class="text-semibold">
+                    Do you really want to Delete this?<br />
+                    This will be deleted permanently from our system.
+                    <br />
+                    <span class="text-danger"><b>Note: </b>By deleting this, Data related to the equipment code will also be <strong>deleted</strong>!</span>
+                </h6>
+                <input type="hidden" name="id" id="TypeDeleteId" />
+            </div>
+            <div class="modal-footer border-top-1 border-top-grey-800 pt-10">
+                <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                <a class="btn btn-danger" id="deleteId">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="text-center text-bold">Update Code</h4>
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form class="form-horizontal" action="@Url.Action("PostUpdateEquipmentCode","Admin")" method="post">
+
+                    <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+                    
+                    <input type="hidden" name="Id" id="updId" />
+                    <input type="hidden" name="way" value="@ViewBag.Way" />
+
+                    <div class="form-group">
+                        <label class="text-bold">Equipment Code <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" onkeyup="validateCode(this.value)" id="updCode" required name="Code" placeholder="Enter Equipment Code Here">
+                        <span class="text-danger" id="updCodeErrMsg"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Equipment Name </label>
+                        <input type="text" class="form-control" name="EquipmentName" id="updEquipmentName" placeholder="Enter Equipment Name Here">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Description</label>
+                        <textarea class="form-control" name="Description" id="updDescription" placeholder="Enter Equipment Description Here"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel p-20 m-10">
+
+    <div class="row text-center">
+        <h3><u>Equipment Code List</u></h3>
+        <div class="text-bold" style="color:@ViewBag.Color;" id="alertMsg">
+            @ViewBag.Message
+        </div>
+    </div>
+
+    <div class="row mb-10">
+        <div class="col-md-2">
+            <button onclick="deleteSelected()" class="btn btn-danger btn-block pull-left" id="deleteBtn">Delete Selected <i class="icon-spinner spinner" id="delAllSpin" style="display:none;"></i></button>
+        </div>
+        <div class="col-md-8">
+            &nbsp;
+        </div>
+        <div class="col-md-2">
+            <a href="@Url.Action("AddEquipmentCode","Admin")" class="btn btn-primary btn-block pull-right">Add New</a>
+        </div>
+    </div>
+
+    
+
+    <input type="hidden" id="way" value="@ViewBag.Way" />
+    <div class="table-responsive">
+        <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="codeTable">
+            <thead class="bg-indigo">
+                <tr>
+                    <th hidden>...</th>
+                    <th class="text-bold text-center">
+                        <input type="checkbox" name="chk_all" id="chk_all">
+                    </th>
+                    <th class="text-bold text-center">
+                        Action
+                    </th>
+                    <th class="text-bold text-center">
+                        Code (KKS)
+                    </th>
+                    <th class="text-bold text-center">
+                        Equipment
+                    </th>
+                    <th class="text-bold text-center">
+                        Description
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+    var way = $('#way').val();
+
+    loadTable();
+
+    function loadTable(Name, Location)
+    {
+        $('#codeTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetEquipmentCodeDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json"
+                //"data": { Name: Name, Location: Location}
+            },
+            'columns':
+            [
+                { "data": "Hidden", "name": "0" },
+                { "data": "Checkbox", "name": "0" },
+                { "data": "Action", "name": "0" },
+                { "data": "ECode", "name": "Code" },
+                { "data": "EEquipmentName", "name": "EquipmentName" },
+                { "data": "EDescription", "name": "Description" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+                {
+                    'targets': 1,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center',
+                    'className': 'col-lg-1',
+                    'render': function (data, type, full, meta) {
+                        return '<input type="checkbox" name="id" class="commId" value="' + full.EId + '">';
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': 'col-md-4',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                        return '<div class="btn-group" role="group">' +
+                            '<a onclick="updateFunction(' + full.EId + ')" class="btn btn-info" title="Edit"><i class="icon-pencil"></i></a> ' +
+                            '<a href="../Admin/CodeHistory?Id=' + full.EEncId + '" class="btn btn-success" title="History"><i class="icon-eye2"></i></a> ' +
+                            '<a onclick="deleteFunction(' + full.EId + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-floppy-remove"></i></a>' +
+                            '</div>';
+                    }
+                },
+                {
+                    "targets": 3,
+                    'className': 'col-md-4',
+                    "render": function (data, type, full, meta)
+                    {
+                        return full.ECode ;
+                    }
+                },
+                {
+                    "targets": 4,
+                    'className': 'col-md-4',
+                    "render": function (data, type, full, meta)
+                    {
+                        if ($.trim(full.EEquipmentName) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.EEquipmentName;
+                        }
+                    }
+                },
+                {
+                    "targets": 5,
+                    'className': 'col-md-4',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.EDescription) == "")
+                        {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else
+                        {
+                            return full.EDescription;
+                        }
+                    }
+                },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            },
+        });
+    }
+
+
+    function updateFunction(id)
+    {
+        $('#updCodeErrMsg').text("");
+        $('#updSubBtn').attr('disabled', false);
+
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetEquipmentCodeById",
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response)
+            {
+                if (response == 0) {
+                    alert("Record not found");
+                    location.reload();
+                }
+
+                $("#updId").val(response.Id);
+
+                $("#updCode").val(response.Code);
+                $("#updEquipmentName").val(response.EquipmentName);
+                $("#updDescription").val(response.Description);
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function ()
+            {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+    function validateCode(code)
+    {
+        var id = $('#updId').val();
+        if (code != "" && id != "")
+        {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEquipmentCode",
+                dataType: "json",
+                data: {
+                    code: code, id: id
+                },
+                success: function (response)
+                {
+                    if (response == true)
+                    {
+                        $('#updCodeErrMsg').text("");
+                        $('#updSubBtn').attr('disabled', false);
+                    }
+                    else {
+                        $('#updCodeErrMsg').text("Duplicate Code");
+                        $('#updSubBtn').attr('disabled', true);
+                    }
+                },
+                error: function ()
+                {
+                    $('#updCodeErrMsg').text("");
+                    $('#updSubBtn').attr('disabled', false);
+
+                    alert("Ajax failed");
+                }
+            });
+        }
+
+    }
+
+    $("#chk_all").click(function () {
+        $("input[type=checkbox]").prop('checked', $(this).prop('checked'));
+    });
+
+    function deleteSelected() {
+        $('#delAllSpin').show();
+        var checkedNo = $('.commId:checkbox:checked').length;
+
+        if (checkedNo == 0) {
+            alert("Please select atleast one row");
+            $('#delAllSpin').hide();
+            return false;
+        }
+        else {
+            if (confirm("Are you sure you want to delete selected records? Its all references will also be deleted.")) {
+                $('#deleteBtn').prop("disabled", true);
+
+                var ids = [];
+                $(".commId:checkbox:checked").each(function () {
+                    ids.push(this.value);
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: "../Admin/DeleteMultipleEquipmentCode",
+                    dataType: "json",
+                    data: {
+                        ids: ids
+                    },
+                    success: function (response)
+                    {
+                        if (response == true)
+                        {
+                            $('#codeTable').DataTable().clear();
+                            $('#codeTable').DataTable().destroy();
+
+                            loadTable();
+
+                            $('#alertMsg').show();
+                            $('#alertMsg').text("Selected records deleted successfully");
+                            $('#alertMsg').css("color", "green");
+
+                            $('#delAllSpin').hide();
+
+                            $('#deleteBtn').prop("disabled", false);
+                            $('#chk_all').prop('checked', false);
+
+                            $("#alertMsg").fadeTo(4000, 500).slideUp(500, function () {
+                                $("#alertMsg").slideUp(600);
+                            });
+                        }
+                        else {
+                            $('#alertMsg').show();
+                            $('#alertMsg').text("Somethings' wrong");
+                            $('#alertMsg').css("color", "red");
+
+                            $('#delAllSpin').hide();
+                            $('#deleteBtn').prop("disabled", false);
+
+                            $("#alertMsg").fadeTo(4000, 500).slideUp(500, function () {
+                                $("#alertMsg").slideUp(600);
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert("ajax Failed");
+                        $('#deleteBtn').prop("disabled", false);
+
+                        $('#delAllSpin').hide();
+                    }
+                });
+            }
+            else {
+                $('#deleteBtn').prop("disabled", false);
+
+                $('#delAllSpin').hide();
+
+                return false;
+            }
+
+        }
+
+
+    }
+
+    function deleteFunction(id) {
+        var a = document.getElementById('deleteId');
+        a.href = "../Admin/DeleteEquipmentCode?id=" + id + "&way=@ViewBag.Way";
+    }
+
+</script>
+

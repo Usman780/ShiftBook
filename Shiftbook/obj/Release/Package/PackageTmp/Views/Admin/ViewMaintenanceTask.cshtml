@@ -1,0 +1,908 @@
+﻿@using Shiftbook.Models
+@using Shiftbook.BL
+@using Shiftbook.Helping_Classes
+
+@{
+    ViewBag.Title = "View Tasks";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+<img id="loadImg" src='../Content/assets/images/loading.gif' width='150' style="position:fixed; margin-top:20%; margin-left:35%; z-index:111; display:none" />
+<input type="hidden" id="today" value="@ViewBag.today" />
+<input type="hidden" id="Weekly" value="@ViewBag.Week" />
+<input type="hidden" id="Monthly" value="@ViewBag.Month" />
+<input type="hidden" id="Period" value="@ViewBag.Period" />
+<!--Delete Modal-->
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-danger">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Warning</h3>
+            </div>
+            <div class="modal-body p-5">
+                <h6 class="text-semibold">
+                    Do you really want to Delete this?<br />
+                    This is going to permanently delete from our System.<br />
+                    This Action Cannot be Undone.
+                    <br />
+                    <span class="text-danger"><b>Note: </b>By deleting this, Work Order related to this Task will also be <strong>Deleted</strong>!</span>
+                </h6>
+                <input type="hidden" name="id" id="TypeDeleteId" />
+            </div>
+            <div class="modal-footer border-top-1 border-top-grey-800 pt-10">
+                <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                <a class="btn btn-danger" id="deleteId">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Tagging Model-->
+<div class="modal fade" id="TaggingModal">
+    <div class="modal-dialog">
+        <form method="post" action="@Url.Action("TaggingMultipleMaintenanceTask","Admin")" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Tagging/Location</h3>
+                </div>
+                <div class="modal-body p-5">
+                    <div class="form-group row mt-20 mb-20">
+                        <label class="col-md-3 text-bold" style="margin-top:5px"> Location/Tags: </label>
+                        <div class="col-md-9">
+                            <input type="hidden" name="ids" id="TagId" />
+                            <input type="text" name="TagName" id="TagName" placeholder="Location/Tags" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary" id="WorkOrderSubmit">Add WorkOrder</button>
+                </div>
+            </div>
+        </form>
+        
+    </div>
+</div>
+
+<div class="content">
+    <div class="row">
+        @if (ViewBag.today == "" && ViewBag.Week == "" && ViewBag.Month == "")
+        {
+            <div class="col-md-12">
+                <div class="panel panel-flat text-black">
+                    <div class="panel-heading" style="background: #e8eced ">
+
+                            @if (ViewBag.Period != "")
+                            {
+                                <h2 class="text-center text-black">
+                                    Choose Period
+                                </h2>
+                            }
+                            else
+                            {
+                                <h2 class="text-center text-black">
+                                    Search
+                                </h2>
+                            }
+                        <div class="heading-elements">
+                            <ul class="icons-list">
+                                <li><a data-action="collapse" class="rotate-180"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel-body pt-20 pb-20" style="display:none">
+                        <div class="row">
+                            @if (ViewBag.Period == "")
+                            {
+                                <div class="col-md-4 col-lg-4">
+                                    <div class="form-group">
+                                        <label><strong>Code (KKS):</strong></label>
+                                        <select class="select" id="searchCode">
+                                            <option value=""> All</option>
+                                            @foreach (EquipmentCode ec in ViewBag.CodeList)
+                                            {
+                                                <option value="@ec.Code">@ec.Code</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-lg-4">
+                                    <div class="form-group">
+                                        <label><strong>PID:</strong></label>
+                                        <input type="text" placeholder="" class="form-control" id="searchPid">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-lg-4">
+                                    <div class="form-group">
+                                        <label><strong>Maintenance Type:</strong></label>
+                                        <select class="select" id="searchType">
+                                            <option value="">All</option>
+                                            <option value="Control">Control</option>
+                                            <option value="Inspection">Inspection</option>
+                                            <option value="Preventive">Preventive</option>
+                                            <option value="Lubrication">Lubrication</option>
+                                            <option value="Repair">Repair</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-lg-4">
+                                    <div class="form-group">
+                                        <label><strong>Filter By:</strong></label>
+                                        <select class="select" id="DateRange" onchange="SelectFilter(this.value)">
+                                            <option value=""> All</option>
+                                            <option value="Daily">Daily</option>
+                                            <option value="Weekly">Weekly</option>
+                                            <option value="Monthly">Monthly</option>
+                                            <option value="Period">Choose Period</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-lg-4" id="FilterByDate" style="display:none">
+                                    <div class="form-group">
+                                        <label><strong>By Date:</strong></label>
+                                        <input type="date" name="" class="form-control" id="ByDate" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-lg-4" id="FilterByWeek" style="display:none">
+                                    <div class="form-group">
+                                        <label><strong>By Week:</strong></label>
+                                        <select class="select" id="ByWeek">
+                                            <option value="This Week">This Week</option>
+                                            <option value="Previous Week">Previous Week</option>
+                                            <option value="Next Week">Next Week</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-lg-4" id="FilterByMonth" style="display:none">
+                                    <div class="form-group">
+                                        <label><strong>By Month:</strong></label>
+                                        <input type="month" name="" class="form-control" id="ByMonth" />
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="col-md-8 col-lg-8" id="FilterByPeriod" style="">
+                                <div class="row">
+                                    <div class="col-md-6 col-lg-6">
+                                        <div class="form-group">
+                                            <label><strong>Start Date:</strong></label>
+                                            <input type="date" class="form-control" id="StartDateSearch" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-6">
+                                        <div class="form-group">
+                                            <label><strong>End Date:</strong></label>
+                                            <input type="date" class="form-control" id="EndDateSearch" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            @if (ViewBag.tags != null)
+                            {
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label><strong>Tags:</strong></label>
+                                        <select class="select" id="searchTags">
+                                            <option value=""> All</option>
+                                            @foreach (var item in ViewBag.tags)
+                                            {
+                                                <option value="@item.Id">@item.TagName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br />
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12 col-xs-12"></div>
+
+                            <div class="col-md-3 col-sm-12 col-xs-12">
+                                <div class="form-group text-right">
+                                    <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="col-md-12">
+            <div class="panel panel-flat p-20">
+                <div class="row text-center">
+                    <h3><u>Maintenance Task List</u></h3>
+                    <div class="text-bold" style="color:@ViewBag.Color;" id="alertMsg">
+                        @ViewBag.Message
+                    </div>
+                </div>
+                <div class="row mb-10">
+                    <div class="col-md-2">
+                        <a href="@Url.Action("AddMaintenanceTask","Admin")" class="btn btn-primary btn-block">Add New</a>
+                    </div>
+                    <div class="col-md-2">
+                        <button onclick="deleteSelected(2)" class="btn btn-primary btn-block" id="WorkOrderbtn">Add Work Order <i class="icon-spinner spinner" id="AllWoSpin" style="display:none;"></i></button>
+                    </div>
+                    <div class="col-md-6">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-2">
+                        <button onclick="deleteSelected(1)" class="btn btn-danger btn-block" id="deleteBtn">Delete Selected <i class="icon-spinner spinner" id="delAllSpin" style="display:none;"></i></button>
+                    </div>
+                </div>
+
+                <input type="hidden" id="way" value="@ViewBag.Way" />
+                <div class="table-responsive">
+                    <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="taskTable">
+                        <thead class="bg-indigo">
+                            <tr>
+                                <th class="text-bold" hidden>...</th>
+                                <th class="text-bold text-center" style="min-width:40px">
+                                    <input type="checkbox" name="chk_all" id="chk_all">
+                                </th>
+                                <th class="text-bold text-center" style="min-width:100px">
+                                    Action
+                                </th>
+                                <th class="text-bold text-center" style="min-width:150px;">
+                                    KKS (Equipment Code)
+                                </th>
+                                <th class="text-bold text-center" style="min-width:170px;">
+                                    Asset Description
+                                </th>
+                                <th class="text-bold text-center" style="min-width:140px;">
+                                    PID
+                                </th>
+                                <th class="text-bold text-center" style="min-width:170px;">
+                                    System Description
+                                </th>
+                                <th class="text-bold text-center" style="min-width:120px;">
+                                    Maintenance Type
+                                </th>
+                                <th class="text-bold text-center" style="min-width:200px;">
+                                    Maintenance Task (Job Description)
+                                </th>
+                                <th class="text-bold text-center" style="min-width:200px;">
+                                    Comment
+                                </th>
+                                <th class="text-bold text-center" style="min-width:50px;">
+                                    Interval
+                                </th>
+                                <th class="text-bold text-center" style="min-width:50px;">
+                                    Unit
+                                </th>
+                                <th class="text-bold text-center" style="min-width:150px;">
+                                    Job only for plant shut down
+                                </th>
+                                <th class="text-bold text-center" style="min-width:100px;">
+                                    Atex Zone
+                                </th>
+                                <th class="text-bold text-center" style="min-width:150px;">
+                                    Auxiliary Material
+                                </th>
+                                <th class="text-bold text-center" style="min-width:150px;">
+                                    Grease/Oil Manufacturer
+                                </th>
+                                <th class="text-bold text-center" style="min-width:150px;">
+                                    Grease/Oil Model/Type
+                                </th>
+                                <th class="text-bold text-center" style="min-width:150px;">
+                                    Top-up amount (L)
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var chks = [];
+
+    var way = $('#way').val();
+
+    loadTable();
+
+    function loadTable(code, pId, type, date, week, month, period_startdate, period_enddate, tag)
+    {
+        var today = $('#today').val();
+        var Weekly = $('#Weekly').val();
+        var Monthly = $('#Monthly').val();
+        $('#taskTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetMaintenanceTaskDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": {
+                    today: today,
+                    Week: Weekly,
+                    Month: Monthly,
+                    code: code,
+                    pId: pId,
+                    type: type,
+                    searchdate: date,
+                    searchweek: week,
+                    searchmonth: month,
+                    searchperiod_startdate: period_startdate,
+                    searchperiod_enddate: period_enddate,
+                    tag: tag
+                }
+            },
+            'columns':
+            [
+                { "data": "Hidden", "name": "0" },
+                { "data": "Checkbox", "name": "0" },
+                { "data": "Action", "name": "0" },
+                { "data": "EquipmentCode", "name": "EquipmentCode" },
+                { "data": "AssetDescription", "name": "AssetDescription" },
+                { "data": "Pid", "name": "Pid" },
+                { "data": "SystemDescription", "name": "SystemDescription" },
+                { "data": "MaintenanceType", "name": "MaintenanceType" },
+                { "data": "TaskDescription", "name": "TaskDescription" },
+                { "data": "Comment", "name": "Comment" },
+                { "data": "Interval", "name": "Interval" },
+                { "data": "Unit", "name": "Unit" },
+                { "data": "PlantShutDownJob", "name": "PlantShutDownJob" },
+                { "data": "AtexZone", "name": "AtexZone" },
+                { "data": "AuxiliaryMaterial", "name": "AuxiliaryMaterial" },
+                { "data": "GreaseOilManufacturer", "name": "GreaseOilManufacturer" },
+                { "data": "GreaseOilType", "name": "GreaseOilType" },
+                { "data": "TopupAmount", "name": "TopupAmount" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+                {
+                    'targets': 1,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center',
+                    'render': function (data, type, full, meta) {
+                        var abc = "";
+                        if (chks.length > 0) {
+
+                            if ($.inArray(full.Id, chks) !== -1) {
+                                abc = '<input type="checkbox" onchange="SelectCheck(' + full.Id + ')" id="id' + full.Id + '" name="id" class="commId" value="' + full.Id + '" checked>';
+
+                            }
+                            else {
+                                abc = '<input type="checkbox" onchange="SelectCheck(' + full.Id + ')" id="id' + full.Id + '" name="id" class="commId" value="' + full.Id + '">';
+                            }
+                        }
+                        else {
+                            abc = '<input type="checkbox" onchange="SelectCheck(' + full.Id + ')" id="id' + full.Id + '" name="id" class="commId" value="' + full.Id + '">';
+                        }
+                        return abc;
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': 'col-md-2',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                        return '<div class="btn-group" role="group">' +
+                            '<a href="../Admin/UpdateMaintenanceTask?Id='+ full.EncId +'" class="btn btn-info" title="Edit"><i class="icon-pencil"></i></a>' +
+                            '<a onclick="deleteFunction(' + full.Id + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-floppy-remove"></i></a>' +
+                            '</div>';
+                    }
+                },
+                {
+                    "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.EquipmentCode) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.EquipmentCode;
+                        }
+                    }
+                },
+                {
+                    "targets": 4,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.AssetDescription) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.AssetDescription;
+                        }
+                    }
+                },
+                {
+                    "targets": 5,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Pid) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Pid;
+                        }
+                    }
+                },
+                {
+                    "targets": 6,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.SystemDescription) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.SystemDescription;
+                        }
+                    }
+                },
+                {
+                    "targets": 7,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.MaintenanceType) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.MaintenanceType;
+                        }
+                    }
+                },
+                {
+                    "targets": 8,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.TaskDescription) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.TaskDescription;
+                        }
+                    }
+                },
+                {
+                    "targets": 9,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Comment) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Comment;
+                        }
+                    }
+                },
+                {
+                    "targets": 10,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Interval) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Interval;
+                        }
+                    }
+                },
+                {
+                    "targets": 11,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Unit) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Unit;
+                        }
+                    }
+                },
+                {
+                    "targets": 12,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.PlantShutDownJob) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.PlantShutDownJob;
+                        }
+                    }
+                },
+                {
+                    "targets": 13,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.AtexZone) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.AtexZone;
+                        }
+                    }
+                },
+                {
+                    "targets": 14,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.AuxiliaryMaterial) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.AuxiliaryMaterial;
+                        }
+                    }
+                },
+                {
+                    "targets": 15,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.GreaseOilManufacturer) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.GreaseOilManufacturer;
+                        }
+                    }
+                },
+                {
+                    "targets": 16,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.GreaseOilType) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.GreaseOilType;
+                        }
+                    }
+                },
+                {
+                    "targets": 17,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.TopupAmount) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.TopupAmount;
+                        }
+                    }
+                },
+
+
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                },
+            "drawCallback": function (settings) {
+                $('#chk_all').prop("checked", false);
+            },
+        });
+    }
+
+
+    function SelectCheck(getValue) {
+        if ($('#id' + getValue).is(":checked")) {
+            if (jQuery.inArray(getValue, chks) === -1) {
+                chks.push(getValue);
+            }
+        }
+        else {
+            chks.splice($.inArray(getValue, chks), 1);
+        }
+
+        console.log(chks);
+    }
+
+    function searchTable()
+    {
+        var code = $('#searchCode').val();
+        var pId = $('#searchPid').val();
+        var type = $('#searchType').val();
+        var date = $('#ByDate').val();
+        var week = $('#ByWeek').val();
+        var month = $('#ByMonth').val();
+        var period_startdate = $('#StartDateSearch').val();
+        var period_enddate = $('#EndDateSearch').val();
+        var tag = $('#searchTags').val();
+
+        $('#taskTable').DataTable().clear();
+        $('#taskTable').DataTable().destroy();
+
+        loadTable(code, pId, type, date, week, month, period_startdate, period_enddate, tag);
+    }
+
+    function clearSearch()
+    {
+        $('#taskTable').DataTable().clear();
+        $('#taskTable').DataTable().destroy();
+
+        $('#searchCode').val("").change();
+        $('#searchPid').val("");
+        $('#searchType').val("").change();
+        $('#DateRange').val("").change();
+
+        $('#StartDateSearch').val("").change();
+        $('#EndDateSearch').val("").change();
+        $('#searchTags').val("").change();
+
+
+        loadTable();
+    }
+
+    function updateFunction(id)
+    {
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetMaintenanceTaskById",
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response)
+            {
+                if (response == 0) {
+                    alert("Record not found");
+                    location.reload();
+                }
+
+                $("#updId").val(response.Id);
+
+                $("#updEquipmentCodeId").val(response.EquipmentCodeId).change();
+                $("#updAssetDescription").val(response.AssetDescription);
+                $("#updPid").val(response.Pid);
+                $("#updSystemDescription").val(response.SystemDescription);
+                $("#updMaintenanceType").val(response.MaintenanceType).change();
+                $("#updTaskDescription").val(response.TaskDescription);
+                $("#updComment").val(response.Comment);
+                $("#updInterval").val(response.Interval);
+                $("#updUnit").val(response.Unit).change();
+                $("#updPlantShutDownJob").val(response.PlantShutDownJob);
+                $("#updAtexZone").val(response.AtexZone);
+                $("#updAuxiliaryMaterial").val(response.AuxiliaryMaterial);
+                $("#updGreaseOilManufacturer").val(response.GreaseOilManufacturer);
+                $("#updGreaseOilType").val(response.GreaseOilType);
+                $("#updTopupAmount").val(response.TopupAmount);
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function ()
+            {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+    $("#chk_all").change(function () {
+        $("input[type=checkbox]").prop('checked', $(this).prop('checked'));
+        //if ($(".commId:checkbox:checked").length > 0) {
+        //    $.each($(".commId:checkbox:checked"), function () {
+        //        var x = $(this).val();
+                
+        //        if (jQuery.inArray(x, chks) === -1) {
+        //            chks.push($(this).val());
+        //        }
+        //    });
+        //}
+        //else {
+        //    chks = [];
+        //}
+        //console.log(chks);
+    });
+
+    function deleteSelected(valu) {
+        var d = valu;
+        var checkedNo = $('.commId:checkbox:checked').length;
+
+        if (checkedNo == 0) {
+            alert("Please select atleast one row");
+            $('#delAllSpin').hide();
+            return false;
+        }
+        else if (chks.length == 0) {
+            alert("Please select atleast one row");
+            $('#delAllSpin').hide();
+            return false;
+        }
+        else {
+
+            var ids = [];
+            $(".commId:checkbox:checked").each(function () {
+                ids.push(this.value);
+            });
+
+            if (valu == 1) {
+
+                $('#delAllSpin').show();
+                if (confirm("Are you sure you want to delete selected records?")) {
+                    $('#deleteBtn').prop("disabled", true);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "../Admin/DeleteMultipleMaintenanceTask",
+                        dataType: "json",
+                        data: {
+                            ids: chks
+                        },
+                        success: function (response) {
+                            if (response == true) {
+                                $('#taskTable').DataTable().clear();
+                                $('#taskTable').DataTable().destroy();
+
+                                loadTable();
+
+                                $('#alertMsg').show();
+                                $('#alertMsg').text("Selected records deleted successfully");
+                                $('#alertMsg').css("color", "green");
+
+                                $('#delAllSpin').hide();
+
+                                $('#deleteBtn').prop("disabled", false);
+                                $('#chk_all').prop('checked', false);
+
+                                if (chks.length > 0) {
+                                    chks.splice(0, chks.length);
+                                }
+
+                                $("#alertMsg").fadeTo(4000, 500).slideUp(500, function () {
+                                    $("#alertMsg").slideUp(600);
+                                });
+                            }
+                            else {
+                                $('#alertMsg').show();
+                                $('#alertMsg').text("Somethings' wrong");
+                                $('#alertMsg').css("color", "red");
+
+                                $('#delAllSpin').hide();
+                                $('#deleteBtn').prop("disabled", false);
+
+                                $("#alertMsg").fadeTo(4000, 500).slideUp(500, function () {
+                                    $("#alertMsg").slideUp(600);
+                                });
+                            }
+                        },
+                        error: function () {
+                            alert("ajax Failed");
+                            $('#deleteBtn').prop("disabled", false);
+
+                            $('#delAllSpin').hide();
+                        }
+                    });
+                }
+                else {
+                    $('#deleteBtn').prop("disabled", false);
+
+                    $('#delAllSpin').hide();
+
+                    return false;
+                }
+            }
+            if (valu == 2) {
+                $('#TagId').val(chks);
+                $('#TaggingModal').modal('show');
+            }
+
+        }
+    }
+
+    function deleteFunction(id) {
+        var a = document.getElementById('deleteId');
+        a.href = "../Admin/DeleteMaintenanceTask?id=" + id + "&way=@ViewBag.Way";
+    }
+
+    function SelectFilter(value) {
+        var ByDate = document.getElementById('FilterByDate');
+        var ByWeek = document.getElementById('FilterByWeek');
+        var ByMonth = document.getElementById('FilterByMonth');
+        var ByPeriod = document.getElementById('FilterByPeriod');
+        if (value == "") {
+            ByDate.style.display = 'none';
+            ByWeek.style.display = 'none';
+            ByMonth.style.display = 'none';
+            ByPeriod.style.display = 'none';
+            $('#ByDate').val("");
+            $('#ByWeek').val("");
+            $('#ByMonth').val("");
+            $('#ByPeriod').val("");
+        }
+        if (value == "Daily") {
+            if (ByDate.style.display === 'none') {
+                ByDate.style.display = 'block';
+                ByWeek.style.display = 'none';
+                ByMonth.style.display = 'none';
+                ByPeriod.style.display = 'none';
+                $('#ByWeek').val("");
+                $('#ByMonth').val("");
+                $('#ByPeriod').val("");
+            }
+        }
+        if (value == "Weekly") {
+            if (ByWeek.style.display === 'none') {
+                ByWeek.style.display = 'block';
+                ByDate.style.display = 'none';
+                ByMonth.style.display = 'none';
+                ByPeriod.style.display = 'none';
+                $('#ByDate').val("");
+                $('#ByMonth').val("");
+                $('#ByPeriod').val("");
+            }
+        }
+        if (value == "Monthly") {
+            if (ByMonth.style.display === 'none') {
+                ByMonth.style.display = 'block';
+                ByWeek.style.display = 'none';
+                ByDate.style.display = 'none';
+                ByPeriod.style.display = 'none';
+                $('#ByDate').val("");
+                $('#ByWeek').val("");
+                $('#ByPeriod').val("");
+            }
+        }
+        if (value == "Period") {
+            if (ByPeriod.style.display === 'none') {
+                ByPeriod.style.display = 'block';
+                ByWeek.style.display = 'none';
+                ByDate.style.display = 'none';
+                ByMonth.style.display = 'none';
+                $('#ByDate').val("");
+                $('#ByWeek').val("");
+                $('#ByMonth').val("");
+            }
+        }
+    }
+
+
+
+</script>
+
+@if(ViewBag.Period == "")
+{
+    <script>
+        $("#FilterByPeriod").css({ display: "none" });
+    </script>
+}

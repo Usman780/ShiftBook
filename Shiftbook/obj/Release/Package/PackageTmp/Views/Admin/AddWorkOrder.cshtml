@@ -1,0 +1,254 @@
+﻿@using Shiftbook.Models
+@using Shiftbook.BL
+@using Shiftbook.Helping_Classes
+@{
+    DatabaseEntities de = new DatabaseEntities();
+
+    var identity = (System.Security.Claims.ClaimsPrincipal)System.Threading.Thread.CurrentPrincipal;
+    var id = identity.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+    User loggedinUser = new UserBL().GetUserById(Convert.ToInt32(id), de);
+}
+@{
+    ViewBag.Title = "Add New Work Order";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+@{
+    string a = "thisasdasdadf.png";
+    string result = a.Substring(a.LastIndexOf('.') + 1);
+}
+<div class="p-20">
+
+    <div class="row">
+        <form action="@Url.Action("PostAddWorkOrder", "Admin")" method="post" enctype="multipart/form-data">
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            <h2 class="panel-title text-center text-bold">Work Order</h2>
+
+                            <div class="text-center" id="alertMsg" style="color:@ViewBag.Color ; font-weight:bold">
+                                @ViewBag.Message
+                            </div>
+                        </div>
+                        
+                        <div class="panel-body">
+                            <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">Category <span class="text-danger">*</span></label>
+                                <select class="form-control" required name="Category">
+                                    <option value="">-- Select Category --</option>
+                                    <option value="Control">Control</option>
+                                    <option value="Inspection">Inspection</option>
+                                    <option value="Preventive">Preventive</option>
+                                    <option value="Lubrication">Lubrication</option>
+                                    <option value="Repair">Repair</option>
+                                </select>
+                            </div>
+                            @if (@ViewBag.TagId != -1)
+                            {
+                                <input type="hidden" value="@ViewBag.TagId" name="TagsId" />
+                                <div class="form-group">
+                                    <label class="text-bold">Tags <span class="text-danger">*</span></label>
+                                    <select class="form-control" disabled>
+                                        @foreach (var x in ViewBag.tags)
+                                        {
+                                            if (x.Id == ViewBag.TagId)
+                                            {
+                                                <option value="@x.Id" selected>@x.TagName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <label class="text-bold">Tags <span class="text-danger">*</span></label>
+                                    <select class="form-control" name="TagsId" required>
+                                        <option value="">-- Select Tags --</option>
+                                        @foreach (var x in ViewBag.tags)
+                                        {
+                                            <option value="@x.Id">@x.TagName</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
+
+                            <div class="form-group">
+                                <label class="text-bold">Work Order <span class="text-danger">*</span></label>
+                                <select class="select" required name="MaintenanceTaskId">
+                                    <option value="">-- Select Work Order --</option>
+                                    @foreach (KeyValuePair<int, string> t in ViewBag.Tasks)
+                                    {
+                                        <option value="@t.Key">@t.Value</option>
+                                    }
+                                </select>
+                            </div>
+
+
+                            @*<div class="form-group">
+            <label class="text-bold">Equipment Code </label>
+            <select class="select" name="EquipmentCodeId" onkeyup="alert('sadf')">
+                <option value="">-- Select Equipment Code --</option>
+                @foreach (KeyValuePair<int, string> t in ViewBag.CodeList)
+                {
+                    <option value="@t.Key">@t.Value</option>
+                }
+            </select>
+        </div>*@
+
+                            <div class="form-group">
+                                <label class="text-bold">Location</label>
+                                <input type="text" class="form-control" name="Location" placeholder="Enter Location Here">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Type <span class="text-danger">*</span></label>
+                                <select class="form-control" required name="TypeId">
+                                    <option value="">-- Select Type --</option>
+                                    @if (ViewBag.TypeList != null)
+                                    {
+                                        foreach (var x in ViewBag.TypeList)
+                                        {
+                                            <option value="@x.Id">@x.TypeName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Order For <span class="text-danger">*</span></label>
+                                <select class="form-control" required name="OrderFor" onchange="getAuthor(this.value)">
+                                    <option value="">-- Select Order --</option>
+                                    <option value="Department">Department</option>
+                                    @if (loggedinUser.Role == 1 || loggedinUser.Role == 2)
+                                    {
+                                        <option value="User">User</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Worker <span class="text-danger">*</span> <i class="icon-spinner spinner" style="display:none;" id="authSpin"></i></label>
+                                <select name="Author" class="form-control" id="author" required>
+                                    <option value="">-- Please Select Order First --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Date/time <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" name="OrderDateTime" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Description</label>
+                                <textarea name="OrderDescription" class="form-control" placeholder="Enter Order Description Here"></textarea>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="text-bold">File/Image (<small class="text-danger">Can select multiple files</small>)</label>
+                                <input type="file" class="form-control" id="files" name="File" multiple onchange="ValidateUploadFile(this)">
+                                <span class="text-danger" id="fileErrMsg">Max 5 MBs</span>
+                            </div>
+
+
+                            <div class="text-right">
+                                <button type="submit" id="subBtn" class="btn btn-primary">Add <i class="icon-database-insert position-right"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+    function getAuthor(order) {
+        if (order == "Department") {
+            $('#authSpin').show();
+
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/GetDepartmentList",
+                dataType: "json",
+                success: function (response) {
+                    var i = 0;
+                    $('#author').empty();
+                    $('#author').append('<option value="">-- Select Department --</option>');
+
+                    $.each(response, function () {
+                        $('#author').append('<option value="' + response[i].Id + '">' + response[i].Name + '</option>');
+                        i++;
+                    });
+
+                    $('#authSpin').hide();
+                },
+                error: function () {
+                    alert("Ajax failed");
+                }
+            });
+        }
+        else if (order == "User") {
+            $('#authSpin').show();
+
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/GetUserList",
+                dataType: "json",
+                success: function (response) {
+                    var i = 0;
+                    $('#author').empty();
+                    $('#author').append('<option value="">-- Select User --</option>');
+
+                    $.each(response, function () {
+                        $('#author').append('<option value="' + response[i].Id + '">' + response[i].FName + ' (' + response[i].UserRole + ')</option>');
+                        i++;
+                    });
+
+                    $('#authSpin').hide();
+                },
+                error: function () {
+                    alert("Ajax failed");
+                }
+            });
+        }
+        else {
+            $('#author').empty();
+            $('#author').append('<option value="">-- Please Select Order First --</option>');
+        }
+    }
+
+    function ValidateUploadFile(file) {
+        var FileSize = 0;
+        var i = 0;
+        $.each(file.files, function () {
+            FileSize += file.files[i].size / 1024 / 1024;
+            i++;
+        });
+
+        if (i > 5) {
+            alert('Only Five Files Are Allowed!');
+            $('#files').val(null);
+            $('#fileErrMsg').text('Max 5 MBs');
+            $('#subBtn').attr('disabled', false);
+        }
+        else {
+            if (FileSize > 5) {
+                $('#fileErrMsg').text('File size exceeds 5Mbs');
+                $('#subBtn').attr('disabled', true);
+            }
+            else {
+                $('#fileErrMsg').text('Max 5 MBs');
+                $('#subBtn').attr('disabled', false);
+            }
+        }
+    }
+</script>

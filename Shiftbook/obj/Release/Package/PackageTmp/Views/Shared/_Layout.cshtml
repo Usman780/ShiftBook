@@ -1,0 +1,361 @@
+﻿@using Shiftbook.Models
+@using Shiftbook.BL
+@using Shiftbook.Helping_Classes
+@{
+    DatabaseEntities de = new DatabaseEntities();
+
+    var identity = (System.Security.Claims.ClaimsPrincipal)System.Threading.Thread.CurrentPrincipal;
+    var id = identity.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+    User loggedinUser = new UserBL().GetUserById(Convert.ToInt32(id), de);
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    @RenderSection("head", required: false)
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/assets/images/Favicons/S-Fav.jpg">
+
+
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/core.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/components.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/colors.css" rel="stylesheet" type="text/css">
+    <!-- /global stylesheets -->
+    <!-- Core JS files -->
+    <script type="text/javascript" src="~/Content/assets/js/plugins/loaders/pace.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/core/libraries/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/loaders/blockui.min.js"></script>
+    <!-- /core JS files -->
+    <!-- libraries for tabbed input form -->
+    <script type="text/javascript" src="~/Content/assets/js/plugins/forms/wizards/stepy.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/forms/styling/uniform.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/core/libraries/jasny_bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/forms/validation/validate.min.js"></script>
+    <!-- /libraries for tabbed input form -->
+    <!-- Theme JS files -->
+    <script type="text/javascript" src="~/Content/assets/js/plugins/visualization/d3/d3.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/visualization/d3/d3_tooltip.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/forms/styling/switchery.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/forms/styling/uniform.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/ui/moment/moment.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/pickers/daterangepicker.js"></script>
+
+
+
+    <script type="text/javascript" src="~/Content/assets/js/plugins/tables/datatables/datatables.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/tables/datatables/extensions/row_reorder.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/tables/datatables/extensions/responsive.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/pages/datatables_extension_buttons_html5.js"></script>
+
+
+    <script type="text/javascript" src="~/Content/assets/js/core/app.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/pages/datatables_extension_row_reorder.js"></script>
+    <!-- libraries for tabbed input form -->
+    <script type="text/javascript" src="~/Content/assets/js/pages/wizard_stepy.js"></script>
+    <script type="text/javascript" src="~/Content/assets/js/plugins/ui/ripple.min.js"></script>
+    <!-- /libraries for tabbed input form -->
+
+    <script type="text/javascript" src="~/Content/assets/js/pages/dashboard.js"></script>
+
+
+    <!-- /theme JS files -->
+    <!-- /theme JS files -->
+    <!-- /Custom add libraries -->
+
+
+
+    <link href="~/Content/assets/css/icons/fontawesome/styles.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/icons/fontawesome/fonts/fontawesome-webfont.svg" rel="stylesheet" type="text/css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            /*background-image: url(https://images.pexels.com/photos/5453418/pexels-photo-5453418.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);*/
+
+        }
+        .form-control{
+            background: #f1f1f1;
+            padding-left:5px;
+        }
+        .input-group > .form-control + .input-group-btn{
+            padding-left:0px;
+        }
+
+        textarea{
+            resize:vertical;
+        }
+
+        .customXsBtn{
+            padding:5px;
+        }
+
+        .panel {
+            box-shadow: 5px 5px 20px #999;
+        }
+        .sidebar {
+            box-shadow: 5px 5px 20px #999;
+            background: url("http://themes.mediacreed.com/html/synergy/assets/patterns/menu/menu_pattern_1.png");
+        }
+
+         /*.navbar {
+            background: url("http://themes.mediacreed.com/html/synergy/assets/patterns/menu/menu_pattern_1.png");
+        }*/
+
+        .navigation li {
+            -webkit-transition: background 1s; /* For Safari 3.0 to 6.0 */
+            transition: background 1s; /* For modern browsers */
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <!-- Main navbar -->
+    <div class="navbar navbar-inverse bg-indigo">
+        <div class="navbar-header">
+            @*<a class="navbar-brand" href="@Url.Action("Index","Home")"><img src="~/Content/assets/assets/images/logo_light.png" alt=""></a>*@
+
+            <ul class="nav navbar-nav visible-xs-block">
+                <li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>
+                <li><a class="sidebar-mobile-main-toggle"><i class="icon-paragraph-justify3"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="navbar-collapse collapse" id="navbar-mobile">
+            <ul class="nav navbar-nav">
+                <li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
+            </ul>
+
+            <p class="navbar-text">
+                <span class="label bg-success">Online</span>
+            </p>
+
+            <div class="navbar-right">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown dropdown-user">
+                        <a class="dropdown-toggle" data-toggle="dropdown">
+                            <span>@loggedinUser.FName @loggedinUser.LName</span>
+                            <i class="caret"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="@Url.Action("UpdateProfile","Auth")"><i class="icon-user-plus"></i> My profile</a></li>
+                            <li><a href="@Url.Action("UpdatePassword","Auth")"><i class="icon-lock2"></i> Change Password</a></li>
+                            <li class="divider"></li>
+                            <li><a href="@Url.Action("Logout","Auth")"><i class="icon-switch2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /main navbar -->
+
+
+
+
+    <div class="page-container">
+
+        <div class="page-content">
+            <!-- Main sidebar -->
+            <div class="sidebar sidebar-main">
+                <div class="sidebar-content">
+
+                    <!-- User menu -->
+                    <div class="sidebar-user-material">
+                        <div class="category-content">
+                            <div class="sidebar-user-material-content pt-20 pb-20 mt-20 mb-20">
+                                <h6>@loggedinUser.FName @loggedinUser.LName</h6>
+                                <span class="text-size-small">@loggedinUser.Email</span>
+                            </div>
+
+                            @*<div class="sidebar-user-material-menu">
+                                <a href="#user-nav" data-toggle="collapse"><span>My Account</span> <i class="caret"></i></a>
+                            </div>*@
+                        </div>
+
+                        <div class="navigation-wrapper collapse" id="user-nav">
+                            <ul class="navigation">
+                                <li><a href="@Url.Action("UpdateProfile","Auth")"><i class="icon-profile"></i> <span>Update Profile</span></a></li>
+                                <li><a href="@Url.Action("UpdatePassword","Auth")"><i class="icon-lock2"></i> <span>Update Password</span></a></li>
+                                <li><a href="@Url.Action("Logout","Auth")"><i class="icon-switch2"></i> <span>Logout</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /user menu -->
+
+                    <div class="sidebar-category sidebar-category-visible">
+                        <div class="category-content no-padding">
+                            <ul class="navigation navigation-main navigation-accordion">
+
+                                @if (loggedinUser.Role == 1)
+                                {
+                                    <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
+                                    <li><a href="@Url.Action("Index", "Admin")"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-city"></i> <span>Department</span></a>
+                                        <ul id="">
+                                            <li><a id="" href="@Url.Action("AddDepartment", "Admin")">Add New</a></li>
+                                            <li><a href="@Url.Action("ViewDepartments", "Admin")">View Departments</a></li>
+
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-users"></i> <span>User</span></a>
+                                        <ul>
+                                            <li><a id="domainAll" href="@Url.Action("AddUser", "Admin")">Add New</a></li>
+                                            <li><a href="@Url.Action("ViewUser", "Admin")">View Users</a></li>
+
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-cabinet"></i> <span>Equipment Code</span></a>
+                                        <ul>
+                                            <li><a id="domainAll" href="@Url.Action("AddEquipmentCode", "Admin")">Add New</a></li>
+                                            <li><a href="@Url.Action("ViewEquipmentCode", "Admin")">View Codes</a></li>
+
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-task"></i> <span>Maintenance Task</span></a>
+                                        <ul>
+                                            <li><a id="domainAll" href="@Url.Action("AddMaintenanceTask", "Admin")">Add New</a></li>
+                                            <li><a href="@Url.Action("ViewMaintenanceTask", "Admin")">View Tasks</a></li>
+
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-sort-time-asc"></i> <span>Work-Order</span></a>
+                                        <ul>
+                                            <li><a id="domainAll" href="@Url.Action("AddWorkOrder", "Admin")">Add New</a></li>
+                                            <li><a href="@Url.Action("ViewWorkOrders", "Admin")">All Work Orders</a></li>
+                                            <li><a href="@Url.Action("ViewWorkOrders", "Admin", new { isClose = 1})">Closed Work Orders</a></li>
+
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-upload4"></i> <span>Import Files</span></a>
+                                        <ul>
+                                            <li><a href="@Url.Action("ImportMaintenanceTask", "Admin")">Maintenance Tasks</a></li>
+
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-pen"></i> <span>Type</span></a>
+                                        <ul>
+                                            <li><a href="@Url.Action("ViewTypes", "Type")">View Types</a></li>
+
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-chart"></i> <span>Analytics</span></a>
+                                        <ul>
+                                            <li><a href="@Url.Action("Analytics", "Admin")">Analytics</a></li>
+
+                                        </ul>
+                                    </li>
+
+                                }
+                                else
+                                {
+
+                                    <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
+
+                                    <li><a href="@Url.Action("Index", "Home")"><i class="icon-home4"></i> <span>Home</span></a></li>
+
+                                    <li>
+                                        <a href="#"><i class="icon-sort-time-asc"></i> <span>Work-Order</span></a>
+                                        <ul>
+                                            <li><a id="domainAll" href="@Url.Action("AddWorkOrder", "Admin")">Add New</a></li>
+                                            <li><a href="@Url.Action("ViewWorkOrders", "Admin")">My Work Orders</a></li>
+                                            <li><a href="@Url.Action("ViewWorkOrders", "Admin", new { isClose = 1})">Closed Work Orders</a></li>
+
+                                        </ul>
+                                    </li>
+
+
+                                }
+                            </ul>
+                        </div>
+
+                    </div>
+                    <!--/main navigation-->
+
+                </div>
+            </div>
+            <!-- /main sidebar -->
+
+
+            <div class="content-wrapper">
+                <div class="content">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //show hide Passwords
+        function ShowPasswords(id) {
+            if (id == 1) {
+                var x = document.getElementById("password");
+                var ShowPassword = document.getElementById("SignupShowPassword");
+                var HidePassword = document.getElementById("SignupHidePassword");
+                if (x.type === "password") {
+                    x.type = "text";
+                    ShowPassword.style.display = "none";
+                    HidePassword.style.display = "block";
+                } else {
+                    x.type = "password";
+                    ShowPassword.style.display = "block";
+                    HidePassword.style.display = "none";
+                }
+            }
+            if (id == 2) {
+                var y = document.getElementById("ConfirmPassword");
+                var ShowPassword = document.getElementById("LoginShowPassword");
+                var HidePassword = document.getElementById("LoginHidePassword");
+                if (y.type === "password") {
+                    y.type = "text";
+                    ShowPassword.style.display = "none";
+                    HidePassword.style.display = "block";
+                } else {
+                    y.type = "password";
+                    ShowPassword.style.display = "block";
+                    HidePassword.style.display = "none";
+                }
+            }
+        }
+        //function Used to hide automatically alert message after 4 seconds
+        $("#alertMsg").fadeTo(4000, 500).slideUp(500, function () {
+            $("#alertMsg").slideUp(600);
+        });
+
+
+    </script>
+</body>
+</html>

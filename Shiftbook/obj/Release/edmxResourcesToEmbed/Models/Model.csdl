@@ -1,0 +1,472 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="DatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Department">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Location" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_User_Department" FromRole="Department" ToRole="User" />
+    <NavigationProperty Name="WorkOrders" Relationship="Self.FK_WorkOrder_Department" FromRole="Department" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="EquipmentCode">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="EquipmentName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="MaintenanceTasks" Relationship="Self.FK_MaintenanceTask_EquipmentCode" FromRole="EquipmentCode" ToRole="MaintenanceTask" />
+    <NavigationProperty Name="WorkOrders" Relationship="Self.FK_WorkOrder_EquipmentCode" FromRole="EquipmentCode" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="MaintenanceTask">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EquipmentCodeId" Type="Int32" />
+    <Property Name="AssetDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Pid" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="SystemDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="MaintenanceType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="TaskDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Comment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Interval" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Unit" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="PlantShutDownJob" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="AtexZone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="AuxiliaryMaterial" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="GreaseOilManufacturer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="GreaseOilType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="TopupAmount" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="RoutineType" Type="Int32" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="EquipmentCode" Relationship="Self.FK_MaintenanceTask_EquipmentCode" FromRole="MaintenanceTask" ToRole="EquipmentCode" />
+    <NavigationProperty Name="WorkOrders" Relationship="Self.FK_WorkOrder_MaintenanceTask" FromRole="MaintenanceTask" ToRole="WorkOrder" />
+    <NavigationProperty Name="TagsTasks" Relationship="DatabaseModel.FK_TaskId_TagsTask" FromRole="MaintenanceTask" ToRole="TagsTask" />
+    <NavigationProperty Name="EquipmentCodeHistories" Relationship="DatabaseModel.FK_EquipmentCodeHistory_Task" FromRole="MaintenanceTask" ToRole="EquipmentCodeHistory" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="DepartmentId" Type="Int32" />
+    <Property Name="FName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="LName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="UserName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Language" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Contact" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="355" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Author" Type="Int32" />
+    <Property Name="Role" Type="Int32" />
+    <Property Name="IsPrimary" Type="Int32" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Department" Relationship="Self.FK_User_Department" FromRole="User" ToRole="Department" />
+    <NavigationProperty Name="WorkOrders" Relationship="Self.FK_WorkOrder_User" FromRole="User" ToRole="WorkOrder" />
+    <NavigationProperty Name="WorkOrderHistories" Relationship="Self.FK_WorkOrderHistory_User" FromRole="User" ToRole="WorkOrderHistory" />
+    <NavigationProperty Name="Types" Relationship="DatabaseModel.FK_CreatedBy_User" FromRole="User" ToRole="Type" />
+    <NavigationProperty Name="EquipmentCodeHistories" Relationship="DatabaseModel.FK_EquipmentCodeHistory_User" FromRole="User" ToRole="EquipmentCodeHistory" />
+  </EntityType>
+  <EntityType Name="WorkOrder">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FollowupParentId" Type="Int32" />
+    <Property Name="EquipmentCodeId" Type="Int32" />
+    <Property Name="MaintenanceTaskId" Type="Int32" />
+    <Property Name="Location" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Category" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="OrderType" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="OrderFor" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="DepartmentId" Type="Int32" />
+    <Property Name="UserId" Type="Int32" />
+    <Property Name="OrderDateTime" Type="DateTime" Precision="3" />
+    <Property Name="OrderDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="OrderStatus" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="WorkTime" Type="Time" Precision="7" />
+    <Property Name="File1Path" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="File2Path" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="File3Path" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="File4Path" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="File5Path" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="IsClosed" Type="Int32" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Department" Relationship="Self.FK_WorkOrder_Department" FromRole="WorkOrder" ToRole="Department" />
+    <NavigationProperty Name="EquipmentCode" Relationship="Self.FK_WorkOrder_EquipmentCode" FromRole="WorkOrder" ToRole="EquipmentCode" />
+    <NavigationProperty Name="MaintenanceTask" Relationship="Self.FK_WorkOrder_MaintenanceTask" FromRole="WorkOrder" ToRole="MaintenanceTask" />
+    <NavigationProperty Name="User" Relationship="Self.FK_WorkOrder_User" FromRole="WorkOrder" ToRole="User" />
+    <NavigationProperty Name="WorkOrder1" Relationship="Self.FK_WorkOrder_WorkOrder" FromRole="WorkOrder" ToRole="WorkOrder1" />
+    <NavigationProperty Name="WorkOrder2" Relationship="Self.FK_WorkOrder_WorkOrder" FromRole="WorkOrder1" ToRole="WorkOrder" />
+    <NavigationProperty Name="WorkOrderHistories" Relationship="Self.FK_WorkOrderHistory_WorkOrder" FromRole="WorkOrder" ToRole="WorkOrderHistory" />
+    <Property Name="TypeId" Type="Int32" />
+    <NavigationProperty Name="Type" Relationship="DatabaseModel.FK_WorkOrder_Type" FromRole="WorkOrder" ToRole="Type" />
+    <Property Name="TagsId" Type="Int32" />
+    <NavigationProperty Name="Tag" Relationship="DatabaseModel.FK_WorkOrder_Tags" FromRole="WorkOrder" ToRole="Tag" />
+    <NavigationProperty Name="EquipmentCodeHistories" Relationship="DatabaseModel.FK_EquipmentCodeHistory_WorkOrder" FromRole="WorkOrder" ToRole="EquipmentCodeHistory" />
+  </EntityType>
+  <EntityType Name="WorkOrderHistory">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkOrderId" Type="Int32" />
+    <Property Name="EquipmentCodeId" Type="Int32" />
+    <Property Name="OrderStatus" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+    <Property Name="UpdatedBy" Type="Int32" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="User" Relationship="Self.FK_WorkOrderHistory_User" FromRole="WorkOrderHistory" ToRole="User" />
+    <NavigationProperty Name="WorkOrder" Relationship="Self.FK_WorkOrderHistory_WorkOrder" FromRole="WorkOrderHistory" ToRole="WorkOrder" />
+  </EntityType>
+  <Association Name="FK_User_Department">
+    <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+    <End Role="User" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User">
+        <PropertyRef Name="DepartmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrder_Department">
+    <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrder">
+        <PropertyRef Name="DepartmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MaintenanceTask_EquipmentCode">
+    <End Role="EquipmentCode" Type="Self.EquipmentCode" Multiplicity="0..1" />
+    <End Role="MaintenanceTask" Type="Self.MaintenanceTask" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EquipmentCode">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="MaintenanceTask">
+        <PropertyRef Name="EquipmentCodeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrder_EquipmentCode">
+    <End Role="EquipmentCode" Type="Self.EquipmentCode" Multiplicity="0..1" />
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EquipmentCode">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrder">
+        <PropertyRef Name="EquipmentCodeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrder_MaintenanceTask">
+    <End Role="MaintenanceTask" Type="Self.MaintenanceTask" Multiplicity="0..1" />
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="MaintenanceTask">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrder">
+        <PropertyRef Name="MaintenanceTaskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrder_User">
+    <End Role="User" Type="Self.User" Multiplicity="0..1" />
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrder">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrderHistory_User">
+    <End Role="User" Type="Self.User" Multiplicity="0..1" />
+    <End Role="WorkOrderHistory" Type="Self.WorkOrderHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrderHistory">
+        <PropertyRef Name="UpdatedBy" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrder_WorkOrder">
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+    <End Role="WorkOrder1" Type="Self.WorkOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrder1">
+        <PropertyRef Name="FollowupParentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrderHistory_WorkOrder">
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+    <End Role="WorkOrderHistory" Type="Self.WorkOrderHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrderHistory">
+        <PropertyRef Name="WorkOrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="DatabaseEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Departments" EntityType="Self.Department" />
+    <EntitySet Name="EquipmentCodes" EntityType="Self.EquipmentCode" />
+    <EntitySet Name="MaintenanceTasks" EntityType="Self.MaintenanceTask" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <EntitySet Name="WorkOrders" EntityType="Self.WorkOrder" />
+    <EntitySet Name="WorkOrderHistories" EntityType="Self.WorkOrderHistory" />
+    <AssociationSet Name="FK_User_Department" Association="Self.FK_User_Department">
+      <End Role="Department" EntitySet="Departments" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrder_Department" Association="Self.FK_WorkOrder_Department">
+      <End Role="Department" EntitySet="Departments" />
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MaintenanceTask_EquipmentCode" Association="Self.FK_MaintenanceTask_EquipmentCode">
+      <End Role="EquipmentCode" EntitySet="EquipmentCodes" />
+      <End Role="MaintenanceTask" EntitySet="MaintenanceTasks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrder_EquipmentCode" Association="Self.FK_WorkOrder_EquipmentCode">
+      <End Role="EquipmentCode" EntitySet="EquipmentCodes" />
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrder_MaintenanceTask" Association="Self.FK_WorkOrder_MaintenanceTask">
+      <End Role="MaintenanceTask" EntitySet="MaintenanceTasks" />
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrder_User" Association="Self.FK_WorkOrder_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrderHistory_User" Association="Self.FK_WorkOrderHistory_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="WorkOrderHistory" EntitySet="WorkOrderHistories" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrder_WorkOrder" Association="Self.FK_WorkOrder_WorkOrder">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkOrder1" EntitySet="WorkOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrderHistory_WorkOrder" Association="Self.FK_WorkOrderHistory_WorkOrder">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkOrderHistory" EntitySet="WorkOrderHistories" />
+    </AssociationSet>
+    <EntitySet Name="Types" EntityType="DatabaseModel.Type" />
+    <AssociationSet Name="FK_CreatedBy_User" Association="DatabaseModel.FK_CreatedBy_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Type" EntitySet="Types" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrder_Type" Association="DatabaseModel.FK_WorkOrder_Type">
+      <End Role="Type" EntitySet="Types" />
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+    </AssociationSet>
+    <EntitySet Name="Tags" EntityType="DatabaseModel.Tag" />
+    <EntitySet Name="TagsTasks" EntityType="DatabaseModel.TagsTask" />
+    <AssociationSet Name="FK_TaskId_TagsTask" Association="DatabaseModel.FK_TaskId_TagsTask">
+      <End Role="MaintenanceTask" EntitySet="MaintenanceTasks" />
+      <End Role="TagsTask" EntitySet="TagsTasks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TagsId_TagsTask" Association="DatabaseModel.FK_TagsId_TagsTask">
+      <End Role="Tag" EntitySet="Tags" />
+      <End Role="TagsTask" EntitySet="TagsTasks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkOrder_Tags" Association="DatabaseModel.FK_WorkOrder_Tags">
+      <End Role="Tag" EntitySet="Tags" />
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+    </AssociationSet>
+    <EntitySet Name="EquipmentCodeHistories" EntityType="DatabaseModel.EquipmentCodeHistory" />
+    <AssociationSet Name="FK_EquipmentCodeHistory_Task" Association="DatabaseModel.FK_EquipmentCodeHistory_Task">
+      <End Role="MaintenanceTask" EntitySet="MaintenanceTasks" />
+      <End Role="EquipmentCodeHistory" EntitySet="EquipmentCodeHistories" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EquipmentCodeHistory_User" Association="DatabaseModel.FK_EquipmentCodeHistory_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="EquipmentCodeHistory" EntitySet="EquipmentCodeHistories" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EquipmentCodeHistory_WorkOrder" Association="DatabaseModel.FK_EquipmentCodeHistory_WorkOrder">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="EquipmentCodeHistory" EntitySet="EquipmentCodeHistories" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Type">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TypeName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="ExtraFeild1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="ExtraFeild2" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="ExtraFeild3" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="User" Relationship="DatabaseModel.FK_CreatedBy_User" FromRole="Type" ToRole="User" />
+    <NavigationProperty Name="WorkOrders" Relationship="DatabaseModel.FK_WorkOrder_Type" FromRole="Type" ToRole="WorkOrder" />
+  </EntityType>
+  <Association Name="FK_CreatedBy_User">
+    <End Type="DatabaseModel.User" Role="User" Multiplicity="0..1" />
+    <End Type="DatabaseModel.Type" Role="Type" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Type">
+        <PropertyRef Name="CreatedBy" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrder_Type">
+    <End Type="DatabaseModel.Type" Role="Type" Multiplicity="0..1" />
+    <End Type="DatabaseModel.WorkOrder" Role="WorkOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Type">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrder">
+        <PropertyRef Name="TypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Tag">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TagName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="TagsTasks" Relationship="DatabaseModel.FK_TagsId_TagsTask" FromRole="Tag" ToRole="TagsTask" />
+    <NavigationProperty Name="WorkOrders" Relationship="DatabaseModel.FK_WorkOrder_Tags" FromRole="Tag" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="TagsTask">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TagsId" Type="Int32" />
+    <Property Name="TaskId" Type="Int32" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="MaintenanceTask" Relationship="DatabaseModel.FK_TaskId_TagsTask" FromRole="TagsTask" ToRole="MaintenanceTask" />
+    <NavigationProperty Name="Tag" Relationship="DatabaseModel.FK_TagsId_TagsTask" FromRole="TagsTask" ToRole="Tag" />
+  </EntityType>
+  <Association Name="FK_TaskId_TagsTask">
+    <End Type="DatabaseModel.MaintenanceTask" Role="MaintenanceTask" Multiplicity="0..1" />
+    <End Type="DatabaseModel.TagsTask" Role="TagsTask" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="MaintenanceTask">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TagsTask">
+        <PropertyRef Name="TaskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TagsId_TagsTask">
+    <End Type="DatabaseModel.Tag" Role="Tag" Multiplicity="0..1" />
+    <End Type="DatabaseModel.TagsTask" Role="TagsTask" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tag">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TagsTask">
+        <PropertyRef Name="TagsId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkOrder_Tags">
+    <End Type="DatabaseModel.Tag" Role="Tag" Multiplicity="0..1" />
+    <End Type="DatabaseModel.WorkOrder" Role="WorkOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tag">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkOrder">
+        <PropertyRef Name="TagsId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="EquipmentCodeHistory">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkOrderId" Type="Int32" />
+    <Property Name="EquipmentCodeId" Type="Int32" />
+    <Property Name="TaskId" Type="Int32" />
+    <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Int32" />
+    <Property Name="UpdatedBy" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="MaintenanceTask" Relationship="DatabaseModel.FK_EquipmentCodeHistory_Task" FromRole="EquipmentCodeHistory" ToRole="MaintenanceTask" />
+    <NavigationProperty Name="User" Relationship="DatabaseModel.FK_EquipmentCodeHistory_User" FromRole="EquipmentCodeHistory" ToRole="User" />
+    <NavigationProperty Name="WorkOrder" Relationship="DatabaseModel.FK_EquipmentCodeHistory_WorkOrder" FromRole="EquipmentCodeHistory" ToRole="WorkOrder" />
+  </EntityType>
+  <Association Name="FK_EquipmentCodeHistory_Task">
+    <End Type="DatabaseModel.MaintenanceTask" Role="MaintenanceTask" Multiplicity="0..1" />
+    <End Type="DatabaseModel.EquipmentCodeHistory" Role="EquipmentCodeHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="MaintenanceTask">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="EquipmentCodeHistory">
+        <PropertyRef Name="TaskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EquipmentCodeHistory_User">
+    <End Type="DatabaseModel.User" Role="User" Multiplicity="0..1" />
+    <End Type="DatabaseModel.EquipmentCodeHistory" Role="EquipmentCodeHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="EquipmentCodeHistory">
+        <PropertyRef Name="UpdatedBy" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EquipmentCodeHistory_WorkOrder">
+    <End Type="DatabaseModel.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="DatabaseModel.EquipmentCodeHistory" Role="EquipmentCodeHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="EquipmentCodeHistory">
+        <PropertyRef Name="WorkOrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

@@ -1,0 +1,366 @@
+﻿
+@{
+    ViewBag.Title = "View Departments";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+<img id="loadImg" src='../Content/assets/images/loading.gif' width='150' style="position:fixed; margin-top:20%; margin-left:35%; z-index:111; display:none" />
+
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-danger">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Warning</h3>
+            </div>
+            <div class="modal-body p-5">
+                <h6 class="text-semibold">
+                    Do you really want to Delete this?<br />
+                    This is going to permanently delete from our System.<br />
+                    This Action Cannot be Undone.
+                </h6>
+                <input type="hidden" name="id" id="TypeDeleteId" />
+            </div>
+            <div class="modal-footer border-top-1 border-top-grey-800 pt-10">
+                <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                <a class="btn btn-danger" id="deleteId">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="text-center text-bold">Update Department</h4>
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form class="form-horizontal" action="@Url.Action("PostUpdateDepartment","Admin")" method="post">
+
+                    <input type="hidden" name="Id" id="updId" />
+                    <input type="hidden" name="way" value="@ViewBag.Way" />
+
+
+                    <div class="form-group">
+                        <label class="text-bold">Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" required name="Name" id="updName" placeholder="Enter First Name" onkeyup="validateDepartment(this.value)">
+                        <span class="text-danger" id="updDepartmentErrMsg"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Location</label>
+                        <input type="text" class="form-control" name="Location" id="updLocation" placeholder="Enter Location">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-flat text-black">
+                <div class="panel-heading" style="background: #e8eced ">
+                    <h2 class="text-center text-black">
+                        Search
+                    </h2>
+                    <div class="heading-elements">
+                        <ul class="icons-list">
+                            <li><a data-action="collapse" class="rotate-180"></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body pt-20 pb-20" style="display:none">
+                    <div class="row">
+                        <div class="col-md-4 col-lg-4">
+                            <div class="form-group">
+                                <label><strong>Name:</strong></label>
+                                <input type="text" placeholder="" class="form-control" id="searchName">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-lg-4">
+                            <div class="form-group">
+                                <label><strong>Location:</strong></label>
+                                <input type="text" placeholder="" class="form-control" id="searchLocation">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br />
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12"></div>
+
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group text-right">
+                                <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="panel p-20">
+                <div class="row text-center">
+                    <h3><u>Department List</u></h3>
+                    <div class="text-bold" style="color:@ViewBag.Color;" id="alertMsg">
+                        @ViewBag.Message
+                    </div>
+                </div>
+
+                <div class="row mb-10">
+                    <div class="col-md-8"></div>
+                    <div class="col-md-2 pull-right">
+                        <a href="@Url.Action("AddDepartment","Admin")" class="btn btn-primary btn-block pull-right">Add New</a>
+                    </div>
+                </div>
+
+                <input type="hidden" id="way" value="@ViewBag.Way" />
+                <div class="table-responsive">
+                    <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="departmentTable">
+                        <thead class="bg-indigo">
+                            <tr>
+                                <th hidden>...</th>
+                                <th class="text-bold text-center" style="min-width:200px">
+                                    Action
+                                </th>
+                                <th class="text-bold text-center">
+                                    Name
+                                </th>
+                                <th class="text-bold text-center">
+                                    Location
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var way = $('#way').val();
+
+    loadTable();
+
+    function loadTable(Name, Location)
+    {
+        $('#departmentTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetDepartmentDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": { Name: Name, Location: Location}
+            },
+            'columns':
+            [
+                { "data": "Hidden", "name": "0" },
+                { "data": "Action", "name": "0" },
+                { "data": "Name", "name": "Name" },
+                { "data": "Location", "name": "Location" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+                {
+                    "targets": 1,
+                    'className': 'col-md-4',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                        return '<div class="btn-group" role="group">' +
+                            '<a onclick="updateFunction(' + full.Id + ')" class="btn btn-info" title="Edit"><i class="icon-pencil"></i></a> ' +
+                            '<a onclick="deleteFunction(' + full.Id + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-floppy-remove"></i></a>' +
+                            '</div>';
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': 'col-md-4',
+                    "render": function (data, type, full, meta)
+                    {
+                        return full.Name ;
+                    }
+                },
+                {
+                    "targets": 3,
+                    'className': 'col-md-4',
+                    "render": function (data, type, full, meta)
+                    {
+                        if ($.trim(full.Location) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                        return full.Location ;
+                        }
+                    }
+                },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            },
+        });
+    }
+
+    function searchTable()
+    {
+        var Name = $('#searchName').val();
+        var Location = $('#searchLocation').val();
+
+        $('#departmentTable').DataTable().clear();
+        $('#departmentTable').DataTable().destroy();
+
+        loadTable(Name, Location);
+    }
+
+    function toggleSearch() {
+        if ($('#searchIcon').hasClass('icon-search4')) {
+            $('#searchIcon').removeClass('icon-search4');
+            $('#searchIcon').removeClass('text-info');
+            $('#searchIcon').addClass('icon-cross2');
+            $('#searchIcon').addClass('text-danger');
+
+            $('#searchDiv').toggle('show');
+        }
+        else {
+            $('#searchIcon').addClass('icon-search4');
+            $('#searchIcon').addClass('text-info');
+            $('#searchIcon').removeClass('icon-cross2');
+            $('#searchIcon').removeClass('text-danger');
+
+            $('#searchDiv').toggle('hide');
+        }
+    }
+
+    function clearSearch()
+    {
+        $('#departmentTable').DataTable().clear();
+        $('#departmentTable').DataTable().destroy();
+
+        $('#searchName').val("");
+        $('#searchLocation').val("");
+        loadTable();
+    }
+
+    function updateFunction(id)
+    {
+        $('#updEmailErrMsg').text("");
+        $('#updSubBtn').attr('disabled', false);
+
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetDepartmentById",
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response)
+            {
+                if (response == 0) {
+                    alert("Record not found");
+                    location.reload();
+                }
+
+                $("#updId").val(response.Id);
+
+                $("#updName").val(response.Name);
+                $("#updLocation").val(response.Location);
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function ()
+            {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+    function validateDepartment(name)
+    {
+        var id = $('#updId').val();
+        if (name != "" && id != "")
+        {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateDepartment",
+                dataType: "json",
+                data: {
+                    name: name, id: id
+                },
+                success: function (response)
+                {
+                    if (response == true)
+                    {
+                        $('#updDepartmentErrMsg').text("");
+                        $('#updSubBtn').attr('disabled', false);
+                    }
+                    else {
+                        $('#updDepartmentErrMsg').text("Duplicate Name");
+                        $('#updSubBtn').attr('disabled', true);
+                    }
+                },
+                error: function ()
+                {
+                    $('#updDepartmentErrMsg').text("");
+                    $('#updSubBtn').attr('disabled', false);
+
+                    alert("Ajax failed");
+                }
+            });
+        }
+
+    }
+
+    function deleteFunction(id) {
+        var a = document.getElementById('deleteId');
+        a.href = "../Admin/DeleteDepartment?id=" + id + "&way=@ViewBag.Way";
+    }
+
+</script>
+

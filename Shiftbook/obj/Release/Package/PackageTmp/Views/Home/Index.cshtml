@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+
+<div style="font-weight:bold; color: @ViewBag.Color;" id="alertMsg">
+    @ViewBag.Message
+</div>
+
+
+<div class="row text-center">
+    <div class="col-md-12">
+        <h1 class="text-bold text-highlight"><u>Dashboard</u></h1>
+    </div>
+    <div class="col-md-4 col-md-offset-2 col-sm-6">
+        <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+            <h3 class="text-semibold">My Work Orders</h3>
+            <h2 class="text-bold">@ViewBag.MyOrderCount</h2>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="bg-danger text-center text-white" style="padding: 25px; background: #37acdb ">
+            <h3 class="text-semibold">Closed Work Orders</h3>
+            <h2 class="text-bold">@ViewBag.ClosedOrderCount</h2>
+        </div>
+    </div>
+</div>

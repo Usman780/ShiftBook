@@ -1,0 +1,197 @@
+E:\Shiftbook\Shiftbook\bin\Shiftbook.dll.config
+E:\Shiftbook\Shiftbook\bin\Shiftbook.dll
+E:\Shiftbook\Shiftbook\bin\Shiftbook.pdb
+E:\Shiftbook\Shiftbook\bin\roslyn\csc.exe
+E:\Shiftbook\Shiftbook\bin\roslyn\csc.exe.config
+E:\Shiftbook\Shiftbook\bin\roslyn\csc.rsp
+E:\Shiftbook\Shiftbook\bin\roslyn\csi.exe
+E:\Shiftbook\Shiftbook\bin\roslyn\csi.exe.config
+E:\Shiftbook\Shiftbook\bin\roslyn\csi.rsp
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.Managed.Core.targets
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\Shiftbook\Shiftbook\bin\roslyn\Microsoft.Win32.Primitives.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.AppContext.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Collections.Immutable.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Console.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Diagnostics.DiagnosticSource.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Diagnostics.FileVersionInfo.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Globalization.Calendars.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.IO.Compression.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.IO.Compression.ZipFile.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.IO.FileSystem.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Net.Http.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Net.Sockets.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Reflection.Metadata.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Runtime.InteropServices.RuntimeInformation.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Security.Cryptography.Algorithms.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Security.Cryptography.Encoding.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Security.Cryptography.Primitives.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Security.Cryptography.X509Certificates.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Text.Encoding.CodePages.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Threading.Tasks.Extensions.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.ValueTuple.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Xml.ReaderWriter.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Xml.XmlDocument.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Xml.XPath.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\System.Xml.XPath.XDocument.dll
+E:\Shiftbook\Shiftbook\bin\roslyn\vbc.exe
+E:\Shiftbook\Shiftbook\bin\roslyn\vbc.exe.config
+E:\Shiftbook\Shiftbook\bin\roslyn\vbc.rsp
+E:\Shiftbook\Shiftbook\bin\roslyn\VBCSCompiler.exe
+E:\Shiftbook\Shiftbook\bin\roslyn\VBCSCompiler.exe.config
+E:\Shiftbook\Shiftbook\bin\EntityFramework.dll
+E:\Shiftbook\Shiftbook\bin\EntityFramework.SqlServer.dll
+E:\Shiftbook\Shiftbook\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.dll
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.Host.SystemWeb.dll
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.Security.Cookies.dll
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.Security.dll
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.Security.OAuth.dll
+E:\Shiftbook\Shiftbook\bin\Microsoft.Web.Infrastructure.dll
+E:\Shiftbook\Shiftbook\bin\Newtonsoft.Json.dll
+E:\Shiftbook\Shiftbook\bin\Owin.dll
+E:\Shiftbook\Shiftbook\bin\RestSharp.dll
+E:\Shiftbook\Shiftbook\bin\System.Web.Helpers.dll
+E:\Shiftbook\Shiftbook\bin\System.Web.Mvc.dll
+E:\Shiftbook\Shiftbook\bin\System.Web.Razor.dll
+E:\Shiftbook\Shiftbook\bin\System.Web.Webpages.Deployment.dll
+E:\Shiftbook\Shiftbook\bin\System.Web.Webpages.dll
+E:\Shiftbook\Shiftbook\bin\System.Web.Webpages.Razor.dll
+E:\Shiftbook\Shiftbook\bin\EntityFramework.xml
+E:\Shiftbook\Shiftbook\bin\EntityFramework.SqlServer.xml
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.xml
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.Host.SystemWeb.xml
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.Security.xml
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.Security.Cookies.xml
+E:\Shiftbook\Shiftbook\bin\Microsoft.Owin.Security.OAuth.xml
+E:\Shiftbook\Shiftbook\bin\Newtonsoft.Json.xml
+E:\Shiftbook\Shiftbook\bin\RestSharp.xml
+E:\Shiftbook\Shiftbook\bin\System.Web.Razor.xml
+E:\Shiftbook\Shiftbook\bin\System.Web.Webpages.xml
+E:\Shiftbook\Shiftbook\bin\System.Web.Webpages.Deployment.xml
+E:\Shiftbook\Shiftbook\bin\System.Web.Webpages.Razor.xml
+E:\Shiftbook\Shiftbook\bin\System.Web.Helpers.xml
+E:\Shiftbook\Shiftbook\bin\System.Web.Mvc.xml
+E:\Shiftbook\Shiftbook\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+E:\Shiftbook\Shiftbook\obj\Release\Shiftbook.csprojAssemblyReference.cache
+E:\Shiftbook\Shiftbook\obj\Release\Shiftbook.csproj.CoreCompileInputs.cache
+E:\Shiftbook\Shiftbook\obj\Release\Shiftbook.csproj.CopyComplete
+E:\Shiftbook\Shiftbook\obj\Release\Shiftbook.dll
+E:\Shiftbook\Shiftbook\obj\Release\Shiftbook.pdb
+E:\Shiftbook\Shiftbook\bin\DocumentFormat.OpenXml.dll
+E:\Shiftbook\Shiftbook\bin\SpreadsheetLight.dll
+E:\Shiftbook\Shiftbook\bin\System.Drawing.Common.dll
+E:\Shiftbook\Shiftbook\bin\DocumentFormat.OpenXml.xml
+E:\Shiftbook\Shiftbook\bin\SpreadsheetLight.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Shiftbook.dll.config
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Shiftbook.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Shiftbook.pdb
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\csc.exe
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\csc.exe.config
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\csc.rsp
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\csi.exe
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\csi.exe.config
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\csi.rsp
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.Managed.Core.targets
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\Microsoft.Win32.Primitives.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.AppContext.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Collections.Immutable.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Console.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Diagnostics.DiagnosticSource.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Diagnostics.FileVersionInfo.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Diagnostics.StackTrace.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Globalization.Calendars.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.IO.Compression.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.IO.Compression.ZipFile.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.IO.FileSystem.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.IO.FileSystem.Primitives.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Net.Http.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Net.Sockets.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Reflection.Metadata.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Runtime.InteropServices.RuntimeInformation.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Security.Cryptography.Algorithms.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Security.Cryptography.Encoding.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Security.Cryptography.Primitives.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Security.Cryptography.X509Certificates.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Text.Encoding.CodePages.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Threading.Tasks.Extensions.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.ValueTuple.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Xml.ReaderWriter.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Xml.XmlDocument.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Xml.XPath.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\System.Xml.XPath.XDocument.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\vbc.exe
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\vbc.exe.config
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\vbc.rsp
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\VBCSCompiler.exe
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\roslyn\VBCSCompiler.exe.config
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\DocumentFormat.OpenXml.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\EntityFramework.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\EntityFramework.SqlServer.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.Host.SystemWeb.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.Security.Cookies.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.Security.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.Security.OAuth.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Web.Infrastructure.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Newtonsoft.Json.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Owin.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\RestSharp.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\SpreadsheetLight.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Drawing.Common.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Helpers.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Mvc.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Razor.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Webpages.Deployment.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Webpages.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Webpages.Razor.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\DocumentFormat.OpenXml.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\EntityFramework.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\EntityFramework.SqlServer.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.Host.SystemWeb.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.Security.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.Security.Cookies.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.Owin.Security.OAuth.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Newtonsoft.Json.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\RestSharp.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\SpreadsheetLight.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Razor.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Webpages.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Webpages.Deployment.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Webpages.Razor.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Helpers.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.Web.Mvc.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\obj\Release\Shiftbook.csproj.AssemblyReference.cache
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\obj\Release\Shiftbook.csproj.CoreCompileInputs.cache
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\obj\Release\Shiftbook.csproj.CopyComplete
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\obj\Release\Shiftbook.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\obj\Release\Shiftbook.pdb
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\EPPlus.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.IO.RecyclableMemoryStream.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\System.ComponentModel.Annotations.dll
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\EPPlus.xml
+D:\Hassan Projects\DotNet\ShiftBooks\Shiftbook\bin\Microsoft.IO.RecyclableMemoryStream.xml

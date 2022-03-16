@@ -1,0 +1,574 @@
+﻿@using Shiftbook.Models
+@using Shiftbook.BL
+@using Shiftbook.Helping_Classes
+@{
+    DatabaseEntities de = new DatabaseEntities();
+
+    var identity = (System.Security.Claims.ClaimsPrincipal)System.Threading.Thread.CurrentPrincipal;
+    var id = identity.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+    User loggedinUser = new UserBL().GetUserById(Convert.ToInt32(id), de);
+}
+@{
+    ViewBag.Title = "View Users";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+<img id="loadImg" src='../Content/assets/images/loading.gif' width='150' style="position:fixed; margin-top:20%; margin-left:35%; z-index:111; display:none" />
+
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-danger">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Warning</h3>
+            </div>
+            <div class="modal-body p-5">
+                <h6 class="text-semibold">
+                    Do you really want to Delete this?<br />
+                    This is going to permanently delete from our System.<br />
+                    This Action Cannot be Undone.
+                </h6>
+                <input type="hidden" name="id" id="TypeDeleteId" />
+            </div>
+            <div class="modal-footer border-top-1 border-top-grey-800 pt-10">
+                <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                <a class="btn btn-danger" id="deleteId">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="text-center text-bold">Update user</h5>
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="@Url.Action("PostUpdateUser","Admin")" method="post">
+
+                    <input type="hidden" name="Id" id="updId" />
+                    <input type="hidden" name="way" value="@ViewBag.Way" />
+
+                    <div class="form-group">
+                        <label class="text-bold">Department <span class="text-danger">*</span></label>
+                        <select class="select" required name="DepartmentId" id="updDepartment">
+                            <option value="">-- Select Department --</option>
+                            @foreach (Department d in ViewBag.Departments)
+                            {
+                                <option value="@d.Id">@d.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">First Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" required name="FName" id="updFName" placeholder="Please Enter First Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" required name="LName" id="updLName" placeholder="Please Enter Last Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">User Name</label>
+                        <input type="text" class="form-control" name="UserName" id="updUserName" placeholder="Please Enter User Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Language</label>
+                        <input type="text" class="form-control" name="Language" id="updLanguage" placeholder="Please Enter User Language">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Contact</label>
+                        <input type="text" class="form-control" name="Contact" id="updContact" placeholder="Please Enter User Contact Number">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Email <span class="text-danger">*</span></label>
+                        <input type="email" name="Email" id="updEmail" class="form-control" onkeyup="validateEmail(this.value)" placeholder="Add Email Here" required>
+                        <span class="text-danger" id="updEmailErrMsg"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class=""><input type="checkbox" name="Author" id="updAuthor" class="" value="1"> &nbsp; Is Author?</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="Password" id="updPassword" class="form-control" placeholder="Set Login Password" required>
+                        <div class="input-group-addon">
+                            <input id="toggle" type="checkbox" class="pull-left"> <span id="toggleText" class="ml-5 pull-left">Show</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-flat text-black">
+                <div class="panel-heading" style="background: #e8eced ">
+                    <h2 class="text-center text-black">
+                        Search
+                    </h2>
+                    <div class="heading-elements">
+                        <ul class="icons-list">
+                            <li><a data-action="collapse" class="rotate-180"></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body pt-20 pb-20" style="display:none">
+                    <div class="row">
+                        <div class="col-md-4 col-lg-4">
+                            <div class="form-group">
+                                <label><strong>First Name:</strong></label>
+                                <input type="text" placeholder="" class="form-control" id="searchFName">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-lg-4">
+                            <div class="form-group">
+                                <label><strong>Last Name:</strong></label>
+                                <input type="text" placeholder="" class="form-control" id="searchLName">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-lg-4">
+                            <div class="form-group">
+                                <label><strong>Email:</strong></label>
+                                <input type="text" placeholder="" class="form-control" id="searchEmail">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-lg-4">
+                            <div class="form-group">
+                                <label><strong>Role:</strong></label>
+                                <select class="select" id="searchRole">
+                                    <option value=""> All</option>
+                                    @if (loggedinUser.IsPrimary == 1)
+                                    {
+                                        <option value="1">Administrator</option>
+                                    }
+                                    <option value="2">Maintenance Manager</option>
+                                    <option value="3">Shift Leader</option>
+                                    <option value="4">Shift Operator</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br />
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12"></div>
+
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group text-right">
+                                <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="panel panel-flat">
+                <div class="panel-body">
+                    <div class="row text-center">
+                        <h3><u>Users List</u></h3>
+                        <div class="text-bold" style="color:@ViewBag.Color;" id="alertMsg">
+                            @ViewBag.Message
+                        </div>
+                    </div>
+
+                    <div class="row mb-15">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-2 pull-right">
+                            <a href="@Url.Action("AddUser","Admin")" class="btn btn-primary btn-block pull-right">Add New User</a>
+                        </div>
+                    </div>
+                    <div style="font-weight:bold; color:@ViewBag.Color ; margin-left:10px;" id="alertMsg">
+                        @ViewBag.Message
+                    </div>
+                    <input type="hidden" id="way" value="@ViewBag.Way" />
+
+                    <div class="table-responsive">
+                        <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="userTable">
+                            <thead class="bg-indigo">
+                                <tr>
+                                    <th class="text-bold" hidden>...</th>
+                                    <th class="text-bold text-center" style="min-width:200px">
+                                        Action
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        First Name
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Last Name
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Department
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Role
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Language
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Username
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Author
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Phone #
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Email
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+
+    var way = $('#way').val();
+
+    loadTable();
+
+    function loadTable(fName, lName, email, role)
+    {
+        $('#userTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetUserDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": { fName: fName, lName: lName, email: email, role: role}
+            },
+            'columns':
+            [
+                { "data": "hidden", "name": "0" },
+                { "data": "Action", "name": "0" },
+                { "data": "FName", "name": "FName" },
+                { "data": "LName", "name": "LName" },
+                { "data": "Department", "name": "Department" },
+                { "data": "Role", "name": "Role" },
+                { "data": "Language", "name": "Language" },
+                { "data": "UserName", "name": "UserName" },
+                { "data": "Author", "name": "Author" },
+                { "data": "Contact", "name": "Contact" },
+                { "data": "Email", "name": "Email" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+                {
+                    "targets": 1,
+                    'className': 'col-md-4',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                        return '<div class="btn-group" role="group">' +
+                            '<a onclick="updateFunction(' + full.Id + ')" class="btn btn-info" title="Edit"><i class="icon-pencil"></i></a>' +
+                            '<a onclick="deleteFunction(' + full.Id + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-floppy-remove"></i></a>' +
+                            '</div>';
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return full.FName ;
+                    }
+                },
+                {
+                    "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.LName;
+                    }
+                },
+                {
+                    "targets": 4,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.DepartmentName;
+                    }
+                },
+                {
+                    "targets": 5,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if (full.Role == 1) {
+                            return 'Administrator';
+                        }
+                        else if (full.Role == 2) {
+                            return 'Maintenance Manager';
+                        }
+                        else if (full.Role == 3) {
+                            return 'Shift Leader';
+                        }
+                        else {
+                            return 'Shift Operator';
+                        }
+                    }
+                },
+                {
+                    "targets": 6,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Language) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Language;
+                        }
+                    }
+                },
+                {
+                    "targets": 7,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.UserName) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.UserName;
+                        }
+                    }
+                },
+                {
+                    "targets": 8,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if (full.Author == 1) {
+                            return '<i class="icon-check"></i>';
+                        }
+                        else {
+                            return '<i class="icon-cross"></i>';
+                        }
+                    }
+                },
+                {
+                    "targets": 9,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Contact) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Contact;
+                        }
+                    }
+                },
+                {
+                    "targets": 10,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.Email;
+                    }
+                },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            },
+        });
+    }
+
+    function searchTable()
+    {
+        var fName = $('#searchFName').val();
+        var lName = $('#searchLName').val();
+        var email = $('#searchEmail').val();
+        var role = $('#searchRole').val();
+
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        loadTable(fName, lName, email, role);
+    }
+
+    function clearSearch()
+    {
+        $('#userTable').DataTable().clear();
+        $('#userTable').DataTable().destroy();
+
+        $('#searchFName').val("");
+        $('#searchLName').val("");
+        $('#searchEmail').val("");
+        $('#searchRole').val("").change();
+
+        loadTable();
+    }
+
+    function updateFunction(id)
+    {
+        $('#updEmailErrMsg').text("");
+        $('#updSubBtn').attr('disabled', false);
+
+        $("#loadImg").show();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetUserById",
+            dataType: "json",
+            data: {
+                id: id
+            },
+            success: function (response)
+            {
+                if (response == 0) {
+                    alert("Record not found");
+                    location.reload();
+                }
+
+                $("#updId").val(response.Id);
+
+                $("#updDepartment").val(response.DepartmentId).change();
+                $("#updFName").val(response.FName);
+                $("#updLName").val(response.LName);
+                $("#updUserName").val(response.UserName);
+                $("#updLanguage").val(response.Language);
+                $("#updContact").val(response.Contact);
+                $("#updEmail").val(response.Email);
+                $("#updPassword").val(response.Password);
+
+                if (response.Author == 1) {
+                    $("#updAuthor").prop("checked", true);
+                }
+                else {
+                    $("#updAuthor").prop("checked", false);
+                }
+
+                $("#loadImg").hide();
+                $("#updateModal").modal('show');
+            },
+            error: function ()
+            {
+                $("#loadImg").hide();
+
+                alert("ajax Failed");
+            }
+        });
+
+    }
+
+    function validateEmail(email)
+    {
+        var id = $('#updId').val();
+        if (email != "" && id != "")
+        {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEmail",
+                dataType: "json",
+                data: {
+                    email: email, id: id
+                },
+                success: function (response)
+                {
+                    if (response == true)
+                    {
+                        $('#updEmailErrMsg').text("");
+                        $('#updSubBtn').attr('disabled', false);
+                    }
+                    else {
+                        $('#updEmailErrMsg').text("Duplicate Email");
+                        $('#updSubBtn').attr('disabled', true);
+                    }
+                },
+                error: function ()
+                {
+                    $('#updEmailErrMsg').text("");
+                    $('#updSubBtn').attr('disabled', false);
+
+                    alert("Ajax failed");
+                }
+            });
+        }
+
+    }
+
+    function deleteFunction(id) {
+        var a = document.getElementById('deleteId');
+        a.href = "../Admin/DeleteUser?id=" + id + "&way=@ViewBag.Way";
+    }
+
+</script>
+
+<script>
+    $("#toggle").change(function () {
+
+        // Check the checkbox state
+        if ($(this).is(':checked')) {
+            // Changing type attribute
+            $("#updPassword").attr("type", "text");
+
+            // Change the Text
+            $("#toggleText").text("Hide");
+        } else {
+            // Changing type attribute
+            $("#updPassword").attr("type", "password");
+
+            // Change the Text
+            $("#toggleText").text("Show");
+        }
+
+    });
+</script>
+

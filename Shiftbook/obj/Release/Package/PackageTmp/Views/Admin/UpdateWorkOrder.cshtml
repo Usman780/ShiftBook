@@ -1,0 +1,367 @@
+﻿@using Shiftbook.Models
+@using Shiftbook.BL
+@using Shiftbook.Helping_Classes
+@{
+    DatabaseEntities de = new DatabaseEntities();
+
+    var identity = (System.Security.Claims.ClaimsPrincipal)System.Threading.Thread.CurrentPrincipal;
+    var id = identity.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+    User loggedinUser = new UserBL().GetUserById(Convert.ToInt32(id), de);
+}
+@{
+    ViewBag.Title = "Update Work Order";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+@{
+    WorkOrder wk = ViewBag.WorkOrder;
+    int fileCount = 0;
+}
+
+<div class="modal" id="deleteModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Do You Want to Delete?</h4>
+                <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer text-center">
+                <a class="btn btn-danger" id="deleteId">Yes</a>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="content bg-white">
+
+    <div class="" id="alertMsg" style="color:@ViewBag.Color ; font-weight:bold">
+        @ViewBag.Message
+    </div>
+
+    <div class="row table-bordered border-radius m-20">
+        <center><h5><u><b>Work Order # @wk.Id</b></u></h5></center>
+        <div class="table-responsive">
+            <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="orderTable">
+                <thead class="bg-indigo">
+                    <tr>
+                        <th class="text-bold text-center" style="min-width:150px;">
+                            Date/Time
+                        </th>
+                        <th class="text-bold" style="min-width:350px;">
+                            Entry
+                        </th>
+                        <th class="text-bold text-center" style="min-width:150px;">
+                            Author
+                        </th>
+                        @*<th class="text-bold text-center" style="min-width:100px">
+                                Action
+                            </th>*@
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>@wk.OrderDateTime</td>
+                        <td class="text-left">
+                            @{
+
+
+                                <b>Location</b><br />
+                                if (String.IsNullOrEmpty(wk.Location))
+                                {
+                                    <span class="text-danger">---</span>
+                                }
+                                else
+                                {
+                                    <span>@wk.Location</span>
+                                }
+
+                                <br />
+                                <br />
+
+                                <b>Work Order</b><br />
+                                <span>@wk.MaintenanceTask.TaskDescription</span>
+                                <br />
+                                <br />
+
+                                <b>Files</b><br />
+                                if (!String.IsNullOrEmpty(wk.File1Path))
+                                {
+                                    <a href="@wk.File1Path" download title="Download File"><i style="font-size:0.7em;" class="icon-download4"></i></a>
+                                    <a class="text-danger ml-5 mr-5" onclick="deleteFileFunction('@wk.Id', 0)" title="Remove File"><i style="font-size:0.7em;" class="icon-trash"></i></a>
+                                    @wk.File1Path.Substring(22);
+                                    <br />
+                                    fileCount++;
+                                }
+                                if (!String.IsNullOrEmpty(wk.File2Path))
+                                {
+                                    <a href="@wk.File2Path" download title="Download File"><i style="font-size:0.7em;" class="icon-download4"></i></a>
+                                    <a class="text-danger ml-5 mr-5" onclick="deleteFileFunction('@wk.Id', 1)" title="Remove File"><i style="font-size:0.7em;" class="icon-trash"></i></a>
+                                    @wk.File2Path.Substring(22);
+                                    <br />
+                                    fileCount++;
+                                }
+                                if (!String.IsNullOrEmpty(wk.File3Path))
+                                {
+                                    <a href="@wk.File3Path" download title="Download File"><i style="font-size:0.7em;" class="icon-download4"></i></a>
+                                    <a class="text-danger ml-5 mr-5" onclick="deleteFileFunction('@wk.Id', 2)" title="Remove File"><i style="font-size:0.7em;" class="icon-trash"></i></a>
+                                    @wk.File3Path.Substring(22);
+                                    <br />
+                                    fileCount++;
+                                }
+                                if (!String.IsNullOrEmpty(wk.File4Path))
+                                {
+                                    <a href="@wk.File4Path" download title="Download File"><i style="font-size:0.7em;" class="icon-download4"></i></a>
+                                    <a class="text-danger ml-5 mr-5" onclick="deleteFileFunction('@wk.Id', 3)" title="Remove File"><i style="font-size:0.7em;" class="icon-trash"></i></a>
+                                    @wk.File4Path.Substring(22);
+                                    <br />
+                                    fileCount++;
+                                }
+                                if (!String.IsNullOrEmpty(wk.File5Path))
+                                {
+                                    <a href="@wk.File5Path" download title="Download File"><i style="font-size:0.7em;" class="icon-download4"></i></a>
+                                    <a class="text-danger ml-5 mr-5" onclick="deleteFileFunction('@wk.Id', 4)" title="Remove File"><i style="font-size:0.7em;" class="icon-trash"></i></a>
+                                    @wk.File5Path.Substring(22);
+                                    fileCount++;
+                                }
+
+                                if (String.IsNullOrEmpty(wk.File1Path) && String.IsNullOrEmpty(wk.File2Path) && String.IsNullOrEmpty(wk.File3Path) && String.IsNullOrEmpty(wk.File4Path) && String.IsNullOrEmpty(wk.File5Path))
+                                {
+                                    <span class="text-danger">---</span>
+                                }
+                            }
+
+                        </td>
+                        <td>@wk.User.FName @wk.User.LName</td>
+                        @*<td><i class="icon-download4"></i></td>*@
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="row table-bordered border-radius m-20">
+
+        <center><h5><u><b>Update Work Order</b></u></h5></center>
+
+        <form action="@Url.Action("PostUpdateWorkOrder", "Admin")" method="post" enctype="multipart/form-data">
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-flat">
+
+                        <div class="panel-body">
+                            <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+
+                            <input type="hidden" name="fileCount" id="fileCount" value="@fileCount" required />
+                            <input type="hidden" name="Id" value="@wk.Id" required />
+                            <div class="form-group">
+                                <label class="text-bold">Order Status <span class="text-danger">*</span></label>
+                                <select class="select" required name="OrderStatus">
+                                    <option value="">-- Select --</option>
+                                    @if (String.IsNullOrEmpty(wk.OrderStatus) != true)
+                                    {
+                                        <option value="@wk.OrderStatus" selected>@wk.OrderStatus</option>
+                                    }
+                                    <optgroup label="____________________"></optgroup>
+                                    <option value="Acknowledged">Acknowledged</option>
+                                    <option value="Assigned Work Order">Assigned Work Order</option>
+                                    <option value="Completed Work Order">Completed Work Order</option>
+                                    <option value="Material ordered">Material ordered</option>
+                                    <option value="Pending Work Order">Pending Work Order</option>
+                                    <option value="Postponed until next revision">Postponed until next revision</option>
+                                    <option value="Postponed until next shutdown">Postponed until next shutdown</option>
+
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Tags <span class="text-danger">*</span></label>
+                                <select class="form-control" name="TagsId" required>
+                                    <option value="">-- Select Tags --</option>
+                                    @foreach (var x in ViewBag.tags)
+                                    {
+                                        if (wk.TagsId != null)
+                                        {
+                                            if (wk.TagsId == x.Id)
+                                            {
+                                                <option value="@x.Id" selected>@x.TagName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@x.Id">@x.TagName</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="@x.Id">@x.TagName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            @*<div class="form-group">
+                                <label class="text-bold">Equipment Code </label>
+                                <select class="select" name="EquipmentCodeId" onkeyup="alert('sadf')">
+                                    <option value="">-- Select --</option>
+                                    @if (wk.EquipmentCodeId != null)
+                                    {
+                                        <option value="@wk.EquipmentCodeId" selected>@wk.EquipmentCode.Code</option>
+                                    }
+                                    <optgroup label="____________________"></optgroup>
+                                    @foreach (KeyValuePair<int, string> t in ViewBag.CodeList)
+                                    {
+                                        <option value="@t.Key">@t.Value</option>
+                                    }
+                                </select>
+                            </div>*@
+
+
+                            <div class="form-group">
+                                <label class="text-bold">Description</label>
+                                <textarea name="OrderDescription" class="form-control" placeholder="Enter Order Description Here">@wk.OrderDescription</textarea>
+                            </div>
+
+                            @if (fileCount < 5)
+                            {
+                                <div class="form-group">
+                                    <label class="text-bold">File/Image (<small class="text-danger">Can select multiple files</small>)</label>
+                                    <input type="file" class="form-control" id="files" name="File" multiple onchange="ValidateUploadFile(this)">
+                                    <span class="text-danger" id="fileErrMsg">Max 5 MBs</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group" title="Remove a file to add new">
+                                    <label class="text-bold">File/Image (<small class="text-danger">Can select multiple files</small>)</label>
+                                    <input type="file" class="form-control" readonly disabled>
+                                    <span class="text-danger">Max 5 Files Are Allowed!</span>
+                                </div>
+                            }
+
+                            @if (loggedinUser.Role == 1 || loggedinUser.Role == 2)
+                            {
+                                <div class="form-group">
+                                    <label class="text-bold">Author <span class="text-danger">*</span> <i class="icon-spinner spinner" style="display:none;" id="authSpin"></i></label>
+                                    <select name="UserId" class="form-control" id="author" required>
+                                        <option value="@wk.UserId" selected>@wk.User.FName @wk.User.LName</option>
+                                        <option value="">-- Select User --</option>
+
+                                    </select>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <label class="text-bold">Worker <span class="text-danger">*</span> <i class="icon-spinner spinner" style="display:none;" id="authSpin"></i></label>
+                                    <select id="author" class="form-control" required disabled>
+                                        <option value="@wk.UserId" selected>@wk.User.FName @wk.User.LName</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="UserId" value="@wk.UserId" />
+                            }
+
+                            <div class="form-group">
+                                <label class="text-bold">Work Time</label>
+                                <input type="time" name="WorkTime" value="@wk.WorkTime" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Date/time <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" name="OrderDateTime" required value="@Convert.ToDateTime(wk.OrderDateTime).ToString("yyyy-MM-ddTH:mm")">
+                            </div>
+
+                            @*<div class="form-group">
+            @if (wk.IsClosed == 0)
+            {
+                <label><input type="checkbox" name="IsClosed" value="0" /> &nbsp;&nbsp; <b>Closed</b></label>
+            }
+            else
+            {
+                <label><input type="checkbox" name="IsClosed" value="1" checked /> &nbsp;&nbsp; <b>Closed</b></label>
+            }
+        </div>*@
+
+                            <div class="text-right">
+                                <button type="submit" id="subBtn" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    getUser();
+
+    function getUser()
+    {
+        $('#authSpin').hide();
+
+        $.ajax({
+            type: 'POST',
+            url: "../Ajax/GetUserList",
+            dataType: "json",
+            success: function (response) {
+                var i = 0;
+
+                $.each(response, function () {
+                    $('#author').append('<option value="' + response[i].Id + '">' + response[i].FName + ' (' + response[i].UserRole + ')</option>');
+                    i++;
+                });
+
+                $('#authSpin').hide();
+            },
+            error: function () {
+                alert("Ajax failed");
+            }
+        });
+    }
+
+    function ValidateUploadFile(file)
+    {
+        var fileCount = $('#fileCount').val();
+
+        var FileSize = 0;
+        var i = 0;
+        $.each(file.files, function ()
+        {
+            FileSize += file.files[i].size / 1024 / 1024;
+            i++;
+        });
+
+        i = i + parseInt(fileCount);
+
+        if (i > 5) {
+            alert('Only ' + (5-parseInt(fileCount))+' Files Are Allowed!');
+            $('#files').val(null);
+            $('#fileErrMsg').text('Max 5 MBs');
+            $('#subBtn').attr('disabled', false);
+        }
+        else {
+            if (FileSize > 5) {
+                $('#fileErrMsg').text('File size exceeds 5Mbs');
+                $('#subBtn').attr('disabled', true);
+            }
+            else {
+                $('#fileErrMsg').text('Max 5 MBs');
+                $('#subBtn').attr('disabled', false);
+            }
+        }
+    }
+
+    function deleteFileFunction(id, number) {
+        var a = document.getElementById('deleteId');
+        a.href = "../Admin/RemoveWorkOrderFile?id=" + id + "&fileNumber=" + number + "&way=@ViewBag.Way";
+
+        $('#deleteModal').modal('show');
+    }
+</script>
+

@@ -1,0 +1,402 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-danger">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Warning</h3>
+            </div>
+            <div class="modal-body p-5">
+                <h6 class="text-semibold">
+                    Do you really want to Delete this?<br />
+                    This is going to permanently delete from our System.<br />
+                    This Action Cannot be Undone.
+                </h6>
+                <input type="hidden" name="id" id="TypeDeleteId" />
+            </div>
+            <div class="modal-footer border-top-1 border-top-grey-800 pt-10">
+                <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                <a class="btn btn-danger" id="deleteId">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*<div class="row text-center">
+        <div class="col-md-12">
+            <h1 class="text-bold text-highlight"><u>Admin Dashboard</u></h1>
+        </div>
+        <div class="col-md-3 col-md-offset-3 col-sm-6">
+            <div class="text-center text-white" style="padding: 25px; background: #196f9c">
+                <h3 class="text-semibold">Total Departments</h3>
+                <h2 class="text-bold">@ViewBag.DepartmentCount</h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="bg-danger text-center text-white" style="padding: 25px; background: #37acdb ">
+                <h3 class="text-semibold">Total Users</h3>
+                <h2 class="text-bold">@ViewBag.UserCount</h2>
+            </div>
+        </div>
+    </div>*@
+
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-flat text-black">
+                <div class="panel-heading" style="background: #e8eced ">
+                    <h2 class="text-center text-black">
+                        Search
+                    </h2>
+                    <div class="heading-elements">
+                        <ul class="icons-list">
+                            <li><a data-action="collapse" class="rotate-180"></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body pt-20 pb-20" style="display:none">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label><strong>Date:</strong></label>
+                                <input type="date" placeholder="" class="form-control" id="searchDate" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label><strong>Type:</strong></label>
+                                <select class="select" id="searchType">
+                                    <option value=""> All</option>
+                                    <option value="Electrical">Electrical</option>
+                                    <option value="Mechanical">Mechanical</option>
+                                    <option value="Electrical & Mechanical">Electrical & Mechanical</option>
+                                    <option value="E/I&C">E/I&C</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        @if (ViewBag.LoggedInUser == 1)
+                        {
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label><strong>Worker:</strong></label>
+                                    <input type="text" class="form-control" placeholder="" id="searchAuthor">
+                                </div>
+                            </div>
+                        }
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label><strong>Department:</strong></label>
+                                <input type="text" placeholder="" class="form-control" id="searchDepartment">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br />
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12"></div>
+
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group text-right">
+                                <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-heading text-center">
+                    <h2 class="title text-semibold"><u>Open Work Orders</u></h2>
+                    <div style="font-weight:bold; color: @ViewBag.Color;" id="alertMsg">
+                        @ViewBag.Message
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table text-md-nowrap table-striped table-hover table-bordered text-center no-footer" id="orderTable">
+                            <thead class="bg-indigo">
+                                <tr>
+                                    <th class="text-semibold" hidden>...</th>
+                                    <th class="text-semibold text-center" style="min-width:200px">
+                                        Action
+                                    </th>
+                                    <th class="text-semibold text-center">
+                                        Nr.
+                                    </th>
+                                    <th class="text-semibold text-center">
+                                        Date/Time
+                                    </th>
+                                    <th class="text-semibold text-center">
+                                        Location
+                                    </th>
+                                    <th class="text-semibold text-center">
+                                        Worker
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ViewBag.LoggedInUser == 1 || ViewBag.LogedInUser == 2)
+{
+    <script>
+        loadTable();
+        function loadTable(date, type, author, department)
+        {
+            $('#orderTable').DataTable(
+            {
+                "ajax":
+                {
+                    "url": '@Url.Action("GetWorkOrderDataTableList", "Ajax")',
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": { isOpen: 2, date: date, type: type, author: author, department: department}
+                },
+                'columns':
+                [
+                    { "data": "hidden", "name": "0" },
+                    { "data": "Action", "name": "0" },
+                    { "data": "Count", "name": "Id" },
+                    { "data": "OrderDateTime", "name": "OrderDateTime" },
+                    { "data": "Entry", "name": "0" },
+                    { "data": "User", "name": "User" },
+                ],
+                'columnDefs':
+                [
+                    {
+                        "targets": 0,
+                        "visible": false,
+                        "searchable": false,
+                        "render": function (data, type, full, meta) {
+                            return null;
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        'className': 'col-md-1',
+                        'sortable': false,
+                        "render": function (data, type, full, meta)
+                        {
+                            return '<div class="btn-group" role="group">' +
+                                '<a href="../Details?Id=' + full.EncId + '" class="btn btn-success" title="Details"><b><i class="icon-file-eye2"></i></b></a>' +
+                                '<a href="../Admin/UpdateWorkOrder?eId=' + full.EncId + '" class="btn btn-primary" title="Edit"><b><i class="icon-pencil5"></i></b></a>' +
+                                '<a onclick="deleteFunction(' + full.Id + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="icon-bin2"></i></a>' +
+                                '</div>';
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.Count;
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        'className': '',
+                        "render": function (data, type, full, meta)
+                        {
+                            return full.OrderDateTime ;
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        'className': '',
+                        'sortable': false,
+                        "render": function (data, type, full, meta)
+                        {
+                            var loc = full.Location;
+                            if ($.trim(full.Location) == "")
+                            {
+                                loc = '<span class="text-danger">---</span>';
+                            }
+                            return loc;
+                        }
+                    },
+                    {
+                        "targets": 5,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            if ($.trim(full.UserName) == "") {
+                                return '<span class="text-danger">---</span>';
+                            }
+                            else {
+                                return full.UserName;
+                            }
+                        }
+                    },
+                ],
+                "serverSide": "true",
+                "processing": "true",
+                "language":
+                {
+                    "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                    "search": "<span>Search :</span> _INPUT_",
+                    "searchPlaceholder": "Filter",
+                    "lengthMenu": "<span>Show :</span> _MENU_",
+                    "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                },
+            });
+        }
+    </script>
+}
+else
+{
+    <script>
+        loadTable();
+        function loadTable(date, type, author, department)
+        {
+            $('#orderTable').DataTable(
+            {
+                "ajax":
+                {
+                    "url": '@Url.Action("GetWorkOrderDataTableList", "Ajax")',
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": { isOpen: 2, date: date, type: type, author: author, department: department}
+                },
+                'columns':
+                [
+                    { "data": "hidden", "name": "0" },
+                    { "data": "Action", "name": "0" },
+                    { "data": "Count", "name": "Id" },
+                    { "data": "OrderDateTime", "name": "OrderDateTime" },
+                    { "data": "Entry", "name": "Location" },
+                    { "data": "User", "name": "User" },
+                ],
+                'columnDefs':
+                [
+                    {
+                        "targets": 0,
+                        "visible": false,
+                        "searchable": false,
+                        "render": function (data, type, full, meta) {
+                            return null;
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        'className': 'col-md-1',
+                        'sortable': false,
+                        "render": function (data, type, full, meta)
+                        {
+                            return '<div class="btn-group" role="group">' +
+                                '<a href="../Details?Id=' + full.EncId + '" class="btn btn-success" title="Details"><b><i class="icon-file-eye2"></i></b></a>' +
+                                '<a href="../Admin/UpdateWorkOrder?eId=' + full.EncId + '" class="btn btn-primary" title="Edit"><b><i class="icon-pencil5"></i></b></a>' +
+                                '<a onclick="deleteFunction(' + full.Id + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="icon-bin2"></i></a>' +
+                                '</div>';
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            return full.Count;
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        'className': '',
+                        "render": function (data, type, full, meta)
+                        {
+                            return full.OrderDateTime ;
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        'className': '',
+                        "render": function (data, type, full, meta)
+                        {
+                            var loc = full.Location;
+                            if ($.trim(full.Location) == "")
+                            {
+                                loc = '<span class="text-danger">---</span>';
+                            }
+                            return loc;
+                        }
+                    },
+                    {
+                        "targets": 5,
+                        'className': '',
+                        "render": function (data, type, full, meta) {
+                            if ($.trim(full.UserName) == "") {
+                                return '<span class="text-danger">---</span>';
+                            }
+                            else {
+                                return full.UserName;
+                            }
+                        }
+                    },
+                ],
+                "serverSide": "true",
+                "processing": "true",
+                "language":
+                {
+                    "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                    "search": "<span>Search :</span> _INPUT_",
+                    "searchPlaceholder": "Filter",
+                    "lengthMenu": "<span>Show :</span> _MENU_",
+                    "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                },
+            });
+        }
+    </script>
+}
+<script>
+    function searchTable() {
+        var date = $('#searchDate').val();
+        var type = $('#searchType').val();
+        var author = $('#searchAuthor').val();
+        var department = $('#searchDepartment').val();
+
+        $('#orderTable').DataTable().clear();
+        $('#orderTable').DataTable().destroy();
+
+        loadTable(date, type, author, department);
+    }
+
+    function clearSearch() {
+        $('#orderTable').DataTable().clear();
+        $('#orderTable').DataTable().destroy();
+
+        $('#searchDate').val("");
+        $('#searchType').val("").change();
+        $('#searchAuthor').val("");
+        $('#searchDepartment').val("");
+
+        loadTable();
+    }
+
+    function getExtension(str) {
+        var n = str.lastIndexOf('.');
+        var result = str.substring(n + 1);
+
+        return result;
+    }
+
+    function deleteFunction(id) {
+        var a = document.getElementById('deleteId');
+        a.href = "../Admin/DeleteWorkOrder?id=" + id + "&way=3";
+    }
+</script>

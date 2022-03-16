@@ -1,0 +1,213 @@
+﻿
+@{
+    ViewBag.Title = "UpdateMaintenanceTask";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+@using Shiftbook.Models
+@using Shiftbook.BL
+@model Shiftbook.Models.MaintenanceTask
+<div class="content">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-flat">
+                <div class="panel-heading">
+                    <h2 class="panel-title text-center text-bold">New Task</h2>
+
+
+                    <div class="text-center" id="alertMsg" style="color:@ViewBag.Color ; font-weight:bold">
+                        @ViewBag.Message
+                    </div>
+
+                </div>
+
+                <form action="@Url.Action("PostUpdateMaintenanceTask", "Admin")" method="post">
+                    <div class="panel-body">
+
+                        <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <div class="form-group">
+                            <label class="text-bold">Equipment Code (KKS)<span class="text-danger">*</span></label>
+                            <select class="select" name="EquipmentCodeId" required>
+                                <option value="">-- Select Code --</option>
+                                @foreach (var ec in ViewBag.CodeList)
+                                {
+                                    if (ec.Id == Model.EquipmentCodeId)
+                                    {
+                                        <option value="@ec.Id" selected>@ec.Code</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@ec.Id">@ec.Code</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Tags <span class="text-danger">*</span></label>
+                            <select class="select" name="TagsId" required multiple>
+                                <option value="" disabled>-- Select Tags --</option>
+                                @foreach (var tt in ViewBag.TagsList)
+                                {
+                                    DatabaseEntities de = new DatabaseEntities();
+                                    int count = new TagsTaskBL().GetActiveTagsTaskList(de).Where(x => x.TagsId == tt.Id && x.TaskId == Model.Id).Count();
+                                    if (count >= 1)
+                                    {
+                                        <option value="@tt.Id" selected>@tt.TagName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@tt.Id">@tt.TagName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Asset Description <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" required name="AssetDescription" placeholder="Enter Asset Description Here" value="@Model.AssetDescription">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">PId </label>
+                            <input type="text" class="form-control" name="Pid" placeholder="Enter PID Here" value="@Model.Pid">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">System Description <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" required name="SystemDescription" placeholder="Enter System Description Here" value="@Model.SystemDescription">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Maintenance Type <span class="text-danger">*</span></label>
+                            <select class="form-control" required name="MaintenanceType" id="MaintainanceType" onchange="Maintanance()">
+                                <option value="">-- Select Type --</option>
+                                @if (Model.MaintenanceType == "Control")
+                                {
+                                    <option value="Control" selected>Control</option>
+                                    <option value="Inspection">Inspection</option>
+                                    <option value="Preventive">Preventive</option>
+                                    <option value="Lubrication">Lubrication</option>
+                                    <option value="Repair">Repair</option>
+                                }
+                                else if (Model.MaintenanceType == "Inspection")
+                                {
+                                    <option value="Control">Control</option>
+                                    <option value="Inspection" selected>Inspection</option>
+                                    <option value="Preventive">Preventive</option>
+                                    <option value="Lubrication">Lubrication</option>
+                                    <option value="Repair">Repair</option>
+                                }
+                                else if (Model.MaintenanceType == "Preventive")
+                                {
+                                    <option value="Control">Control</option>
+                                    <option value="Inspection">Inspection</option>
+                                    <option value="Preventive" selected>Preventive</option>
+                                    <option value="Lubrication">Lubrication</option>
+                                    <option value="Repair">Repair</option>
+                                }
+                                else if (Model.MaintenanceType == "Lubrication")
+                                {
+                                    <option value="Control">Control</option>
+                                    <option value="Inspection">Inspection</option>
+                                    <option value="Preventive">Preventive</option>
+                                    <option value="Lubrication" selected>Lubrication</option>
+                                    <option value="Repair">Repair</option>
+                                }
+                                else if (Model.MaintenanceType == "Repair")
+                                {
+                                    <option value="Control">Control</option>
+                                    <option value="Inspection">Inspection</option>
+                                    <option value="Preventive">Preventive</option>
+                                    <option value="Lubrication">Lubrication</option>
+                                    <option value="Repair" selected>Repair</option>
+                                }
+                                else
+                                {
+                                    <option value="Control">Control</option>
+                                    <option value="Inspection">Inspection</option>
+                                    <option value="Preventive">Preventive</option>
+                                    <option value="Lubrication">Lubrication</option>
+                                    <option value="Repair">Repair</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Maintenance Task <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" required name="TaskDescription" placeholder="Enter Maintenace Task (Job Description) Here" value="@Model.TaskDescription">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Comment </label>
+                            <input type="text" class="form-control" name="Comment" placeholder="Enter Comment Here" value="@Model.Comment">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Interval <span class="text-danger" id="IntervalStar">*</span></label>
+                            <input type="number" id="Interval" step="0.01" min="0.01" class="form-control" required name="Interval" placeholder="Enter Interval Here" value="@Model.Interval">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Unit <span class="text-danger" id="UnitStar">*</span></label>
+                            <select class="form-control" id="Unit" required name="Unit">
+                                @if (Model.Unit == "h")
+                                {
+                                    <option value="h" selected>h</option>
+                                    <option value="d">d</option>
+                                }
+                                else if (Model.Unit == "d")
+                                {
+                                    <option value="h">h</option>
+                                    <option value="d" selected>d</option>
+                                }
+                                else
+                                {
+                                    <option value="h">h</option>
+                                    <option value="d">d</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Shut Down Job </label>
+                            <input type="text" class="form-control" name="PlantShutDownJob" placeholder="Job only for plant shut down" value="@Model.PlantShutDownJob">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Atex Zone </label>
+                            <input type="text" class="form-control" name="AtexZone" placeholder="Enter Atex Zone Here" value="@Model.AtexZone">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Auxiliary Material </label>
+                            <input type="text" class="form-control" name="AuxiliaryMaterial" placeholder="Enter Auxiliary Material Here" value="@Model.AuxiliaryMaterial">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Grease/Oil Manufacturer </label>
+                            <input type="text" class="form-control" name="GreaseOilManufacturer" placeholder="Enter Grease/Oil Manufacturer Here" value="@Model.GreaseOilManufacturer">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Grease/Oil Model/Type </label>
+                            <input type="text" class="form-control" name="GreaseOilType" placeholder="Enter Grease/Oil Model/Type Here" value="@Model.GreaseOilType">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-bold">Top-Up Amount </label>
+                            <input type="text" class="form-control" name="TopupAmount" placeholder="Enter Top-up Amount (L) Here" value="@Model.TopupAmount">
+                        </div>
+
+                        <div class="text-right">
+                            <button type="submit" id="subBtn" class="btn btn-primary">Update <i class="icon-upload10 position-right"></i></button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

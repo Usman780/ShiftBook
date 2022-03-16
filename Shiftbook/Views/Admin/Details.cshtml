@@ -1,0 +1,555 @@
+﻿
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-heading">
+                <h2 class="panel-title text-center text-bold">Work Order</h2>
+            </div>
+        </div>
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-flat">
+                <div class="panel-body">
+                    <div class="row" style="margin-left:1px">
+                        <input type="hidden" id="WorkOrderId" value="@ViewBag.WorkOrder.Id" />
+                        <div class="col-md-7">
+                            <div class="row form-group">
+                                <label class="text-bold col-md-5">Category:</label>
+                                <label class="text-semibold col-md-7">@ViewBag.WorkOrder.Category</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="row form-group">
+                                <label class="text-bold col-md-5">Order Status:</label>
+                                @if (ViewBag.WorkOrder.OrderStatus != null)
+                                {
+                                    <label class="text-semibold col-md-7">@ViewBag.WorkOrder.OrderStatus</label>
+                                }
+                                else
+                                {
+                                    <label class="text-semibold col-md-7 text-danger">---</label>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row" style="margin-left:1px">
+                        <div class="col-md-7">
+                            <div class="row form-group">
+                                <label class="text-bold col-md-5">Work Order:</label>
+                                @if (ViewBag.WorkOrder.MaintenanceTaskId != null)
+                                {
+                                    <label class="text-semibold col-md-7">@ViewBag.WorkOrder.MaintenanceTask.TaskDescription</label>
+                                }
+                                else
+                                {
+                                    <label class="text-semibold col-md-7 text-danger">---</label>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="row form-group">
+                                <label class="text-bold col-md-5">Status:</label>
+                                @if (ViewBag.WorkOrder.IsClosed != 1)
+                                {
+                                    <label class="text-semibold col-md-7 text-primary">Open</label>
+                                }
+                                else
+                                {
+                                    <label class="text-semibold col-md-7 text-danger">Closed</label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-left:1px">
+                        <div class="col-md-7">
+                            <div class="row form-group">
+                                <label class="text-bold col-md-5">Equipment Code: </label>
+                                @if (ViewBag.WorkOrder.MaintenanceTaskId != null)
+                                {
+                                    <label class="text-semibold col-md-7">@ViewBag.WorkOrder.MaintenanceTask.EquipmentCode.Code</label>
+                                }
+                                else
+                                {
+                                    <label class="text-semibold col-md-7 text-danger">---</label>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="row form-group">
+                                <label class="text-bold col-md-5">Tags: </label>
+                                @if (ViewBag.WorkOrder.TagsId != null)
+                                {
+                                    <label class="text-semibold col-md-7">@ViewBag.WorkOrder.Tag.TagName</label>
+                                }
+                                else
+                                {
+                                    <label class="text-semibold col-md-7 text-danger">---</label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="text-bold col-md-3">Location:</label>
+                        @if (ViewBag.WorkOrder.Location != null)
+                        {
+                            <label class="text-semibold col-md-9">@ViewBag.WorkOrder.Location</label>
+                        }
+                        else
+                        {
+                            <label class="text-semibold col-md-9 text-danger">---</label>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold col-md-3">Type:</label>
+                        @if (ViewBag.WorkOrder.TypeId != null)
+                        {
+                            <label class="text-semibold col-md-9">@ViewBag.WorkOrder.Type.TypeName</label>
+                        }
+                        else
+                        {
+                            <label class="text-semibold col-md-9 text-danger">---</label>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold col-md-3">Order For:</label>
+                        @if (ViewBag.WorkOrder.OrderFor != null)
+                        {
+                            <label class="text-semibold col-md-9">@ViewBag.WorkOrder.OrderFor</label>
+                        }
+                        else
+                        {
+                            <label class="text-semibold col-md-9 text-danger">---</label>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold col-md-3">Worker:</label>
+                        @if (ViewBag.WorkOrder.UserId != null)
+                        {
+                            <label class="text-semibold col-md-9">@ViewBag.WorkOrder.User.FName @ViewBag.WorkOrder.User.LName</label>
+                        }
+                        else
+                        {
+                            <label class="text-semibold col-md-9 text-danger">---</label>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold col-md-3">Date/time:</label>
+                        @if (ViewBag.WorkOrder.OrderDateTime != null)
+                        {
+                            <label class="text-semibold col-md-9">@ViewBag.WorkOrder.OrderDateTime</label>
+                        }
+                        else
+                        {
+                            <label class="text-semibold col-md-9 text-danger">---</label>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold col-md-3">Description:</label>
+                        @if (ViewBag.WorkOrder.OrderDescription != null)
+                        {
+                            <label class="text-semibold col-md-9">@ViewBag.WorkOrder.OrderDescription</label>
+                        }
+                        else
+                        {
+                            <label class="text-semibold col-md-9 text-danger">---</label>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold col-md-3">Files:</label>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    @if (ViewBag.WorkOrder.File1Path != null)
+                                    {
+                                        if (ViewBag.WorkOrder.File1Path.Contains("png") || ViewBag.WorkOrder.File1Path.Contains("jpg") || ViewBag.WorkOrder.File1Path.Contains("jpeg") || ViewBag.WorkOrder.File1Path.Contains("gif"))
+                                        {
+                                            <img src="@ViewBag.WorkOrder.File1Path" style="width: 100%; height: 100px;" />
+                                        }
+                                        else
+                                        {
+                                            <a href="@ViewBag.WorkOrder.File1Path" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 1</a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <label class="text-semibold text-danger">---</label>
+                                    }
+                                </div>
+
+                                <div class="col-md-4">
+                                    @if (ViewBag.WorkOrder.File2Path != null)
+                                    {
+                                        if (ViewBag.WorkOrder.File2Path.Contains("png") || ViewBag.WorkOrder.File2Path.Contains("jpg") || ViewBag.WorkOrder.File2Path.Contains("jpeg") || ViewBag.WorkOrder.File2Path.Contains("gif"))
+                                        {
+                                            <img src="@ViewBag.WorkOrder.File2Path" style="width: 100%; height: 100px;" />
+                                        }
+                                        else
+                                        {
+                                            <a href="@ViewBag.WorkOrder.File2Path" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 2</a>
+                                        }
+                                    }
+                                </div>
+
+                                <div class="col-md-4">
+                                    @if (ViewBag.WorkOrder.File3Path != null)
+                                    {
+                                        if (ViewBag.WorkOrder.File3Path.Contains("png") || ViewBag.WorkOrder.File3Path.Contains("jpg") || ViewBag.WorkOrder.File3Path.Contains("jpeg") || ViewBag.WorkOrder.File3Path.Contains("gif"))
+                                        {
+                                            <img src="@ViewBag.WorkOrder.File3Path" style="width:100%; height:100px;" />
+                                        }
+                                        else
+                                        {
+                                            <a href="@ViewBag.WorkOrder.File3Path" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 3</a>
+                                        }
+                                    }
+                                </div>
+
+                                <div class="col-md-6">
+                                    @if (ViewBag.WorkOrder.File4Path != null)
+                                    {
+                                        if (ViewBag.WorkOrder.File4Path.Contains("png") || ViewBag.WorkOrder.File4Path.Contains("jpg") || ViewBag.WorkOrder.File4Path.Contains("jpeg") || ViewBag.WorkOrder.File4Path.Contains("gif"))
+                                        {
+                                            <img src="@ViewBag.WorkOrder.File4Path" style="width:100%; height:100px;" />
+                                        }
+                                        else
+                                        {
+                                            <a href="@ViewBag.WorkOrder.File4Path" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 3</a>
+                                        }
+                                    }
+                                </div>
+
+                                <div class="col-md-6">
+                                    @if (ViewBag.WorkOrder.File5Path != null)
+                                    {
+                                        if (ViewBag.WorkOrder.File5Path.Contains("png") || ViewBag.WorkOrder.File5Path.Contains("jpg") || ViewBag.WorkOrder.File5Path.Contains("jpeg") || ViewBag.WorkOrder.File5Path.Contains("gif"))
+                                        {
+                                            <img src="@ViewBag.WorkOrder.File5Path" style="width:100%; height:100px;" />
+                                        }
+                                        else
+                                        {
+                                            <a href="@ViewBag.WorkOrder.File5Path" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 3</a>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        
+            <div class="panel panel-flat">
+                <div class="panel-body">
+                    <div class="row ml-5">
+                        <div class="table-responsive">
+                            <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="taskTable">
+                                <thead class="bg-indigo">
+                                    <tr>
+                                        <th class="text-bold text-center" style="min-width:150px;">
+                                            KKS (Equipment Code)
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:170px;">
+                                            Asset Description
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:140px;">
+                                            PID
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:170px;">
+                                            System Description
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:120px;">
+                                            Maintenance Type
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:200px;">
+                                            Maintenance Task (Job Description)
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:200px;">
+                                            Comment
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:50px;">
+                                            Interval
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:50px;">
+                                            Unit
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:150px;">
+                                            Job only for plant shut down
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:100px;">
+                                            Atex Zone
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:150px;">
+                                            Auxiliary Material
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:150px;">
+                                            Grease/Oil Manufacturer
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:150px;">
+                                            Grease/Oil Model/Type
+                                        </th>
+                                        <th class="text-bold text-center" style="min-width:150px;">
+                                            Top-up amount (L)
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    loadTable();
+
+    function loadTable()
+    {
+        var WorkOrderId = $('#WorkOrderId').val();
+        $('#taskTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetTaskByTags", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": {
+                    WorkOrderId: WorkOrderId
+                }
+            },
+            'columns':
+            [
+                { "data": "EquipmentCode", "name": "EquipmentCode" },
+                { "data": "AssetDescription", "name": "TaskId" },
+                { "data": "Pid", "name": "TaskId" },
+                { "data": "SystemDescription", "name": "TaskId" },
+                { "data": "MaintenanceType", "name": "TaskId" },
+                { "data": "TaskDescription", "name": "TaskId" },
+                { "data": "Comment", "name": "TaskId" },
+                { "data": "Interval", "name": "TaskId" },
+                { "data": "Unit", "name": "TaskId" },
+                { "data": "PlantShutDownJob", "name": "TaskId" },
+                { "data": "AtexZone", "name": "TaskId" },
+                { "data": "AuxiliaryMaterial", "name": "TaskId" },
+                { "data": "GreaseOilManufacturer", "name": "TaskId" },
+                { "data": "GreaseOilType", "name": "TaskId" },
+                { "data": "TopupAmount", "name": "TaskId" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.EquipmentCode) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.EquipmentCode;
+                        }
+                    }
+                },
+                {
+                    "targets": 1,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.AssetDescription) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.AssetDescription;
+                        }
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Pid) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Pid;
+                        }
+                    }
+                },
+                {
+                    "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.SystemDescription) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.SystemDescription;
+                        }
+                    }
+                },
+                {
+                    "targets": 4,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.MaintenanceType) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.MaintenanceType;
+                        }
+                    }
+                },
+                {
+                    "targets": 5,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.TaskDescription) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.TaskDescription;
+                        }
+                    }
+                },
+                {
+                    "targets": 6,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Comment) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Comment;
+                        }
+                    }
+                },
+                {
+                    "targets": 7,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Interval) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Interval;
+                        }
+                    }
+                },
+                {
+                    "targets": 8,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.Unit) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.Unit;
+                        }
+                    }
+                },
+                {
+                    "targets": 9,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.PlantShutDownJob) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.PlantShutDownJob;
+                        }
+                    }
+                },
+                {
+                    "targets": 10,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.AtexZone) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.AtexZone;
+                        }
+                    }
+                },
+                {
+                    "targets": 11,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.AuxiliaryMaterial) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.AuxiliaryMaterial;
+                        }
+                    }
+                },
+                {
+                    "targets": 12,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.GreaseOilManufacturer) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.GreaseOilManufacturer;
+                        }
+                    }
+                },
+                {
+                    "targets": 13,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.GreaseOilType) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.GreaseOilType;
+                        }
+                    }
+                },
+                {
+                    "targets": 14,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.TopupAmount) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.TopupAmount;
+                        }
+                    }
+                },
+
+
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            },
+        });
+    }
+</script>

@@ -1,0 +1,183 @@
+CREATE TABLE [dbo].[Department] (
+    [Id]        INT            IDENTITY (1, 1) NOT NULL,
+    [Name]      NVARCHAR (255) NULL,
+    [Location]  NVARCHAR (255) NULL,
+    [IsActive]  INT            NULL,
+    [CreatedAt] DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+
+
+
+CREATE TABLE [dbo].[User] (
+    [Id]           INT            IDENTITY (1, 1) NOT NULL,
+    [DepartmentId] INT            NULL,
+    [FName]        NVARCHAR (255) NULL,
+    [LName]        NVARCHAR (255) NULL,
+    [UserName]     NVARCHAR (255) NULL,
+    [Language]     NVARCHAR (255) NULL,
+    [Contact]      NVARCHAR (255) NULL,
+    [Email]        NVARCHAR (355) NULL,
+    [Password]     NVARCHAR (MAX) NULL,
+    [Author]       INT            NULL,
+    [Role]         INT            NULL,
+    [IsPrimary]    INT            NULL,
+    [IsActive]     INT            NULL,
+    [CreatedAt]    DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_User_Department] FOREIGN KEY ([DepartmentId]) REFERENCES [dbo].[Department] ([Id])
+);
+
+
+
+CREATE TABLE [dbo].[EquipmentCode] (
+    [Id]            INT            IDENTITY (1, 1) NOT NULL,
+    [Code]          NVARCHAR (MAX) NULL,
+    [EquipmentName] NVARCHAR (255) NULL,
+    [Description]   NVARCHAR (MAX) NULL,
+    [IsActive]      INT            NULL,
+    [CreatedAt]     DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+
+
+
+CREATE TABLE [dbo].[MaintenanceTask] (
+    [Id]                    INT            IDENTITY (1, 1) NOT NULL,
+    [EquipmentCodeId]       INT            NULL,
+    [AssetDescription]      NVARCHAR (MAX) NULL,
+    [Pid]                   NVARCHAR (MAX) NULL,
+    [SystemDescription]     NVARCHAR (MAX) NULL,
+    [MaintenanceType]       NVARCHAR (MAX) NULL,
+    [TaskDescription]       NVARCHAR (MAX) NULL,
+    [Comment]               NVARCHAR (MAX) NULL,
+    [Interval]              NVARCHAR (MAX) NULL,
+    [Unit]                  NVARCHAR (MAX) NULL,
+    [PlantShutDownJob]      NVARCHAR (MAX) NULL,
+    [AtexZone]              NVARCHAR (MAX) NULL,
+    [AuxiliaryMaterial]     NVARCHAR (MAX) NULL,
+    [GreaseOilManufacturer] NVARCHAR (MAX) NULL,
+    [GreaseOilType]         NVARCHAR (MAX) NULL,
+    [TopupAmount]           NVARCHAR (MAX) NULL,
+    [RoutineType]           INT            NULL,
+    [IsActive]              INT            NULL,
+    [CreatedAt]             DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_MaintenanceTask_EquipmentCode] FOREIGN KEY ([EquipmentCodeId]) REFERENCES [dbo].[EquipmentCode] ([Id])
+);
+
+
+
+
+CREATE TABLE [dbo].[WorkOrder] (
+    [Id]                INT            IDENTITY (1, 1) NOT NULL,
+    [FollowupParentId]  INT            NULL,
+    [EquipmentCodeId]   INT            NULL,
+    [MaintenanceTaskId] INT            NULL,
+    [TypeId]            INT            NULL,
+    [Location]          NVARCHAR (255) NULL,
+    [Category]          NVARCHAR (255) NULL,
+    [OrderType]         NVARCHAR (255) NULL,
+    [OrderFor]          NVARCHAR (255) NULL,
+    [DepartmentId]      INT            NULL,
+    [UserId]            INT            NULL,
+    [OrderDateTime]     DATETIME       NULL,
+    [OrderDescription]  NVARCHAR (MAX) NULL,
+    [OrderStatus]       NVARCHAR (255) NULL,
+    [WorkTime]          TIME (7)       NULL,
+    [File1Path]         NVARCHAR (MAX) NULL,
+    [File2Path]         NVARCHAR (MAX) NULL,
+    [File3Path]         NVARCHAR (MAX) NULL,
+    [File4Path]         NVARCHAR (MAX) NULL,
+    [File5Path]         NVARCHAR (MAX) NULL,
+    [IsClosed]          INT            NULL,
+    [IsActive]          INT            NULL,
+    [CreatedAt]         DATETIME       NULL,
+    [TagsId]            INT            NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_WorkOrder_Department] FOREIGN KEY ([DepartmentId]) REFERENCES [dbo].[Department] ([Id]),
+    CONSTRAINT [FK_WorkOrder_MaintenanceTask] FOREIGN KEY ([MaintenanceTaskId]) REFERENCES [dbo].[MaintenanceTask] ([Id]),
+    CONSTRAINT [FK_WorkOrder_User] FOREIGN KEY ([UserId]) REFERENCES [dbo].[User] ([Id]),
+    CONSTRAINT [FK_WorkOrder_EquipmentCode] FOREIGN KEY ([EquipmentCodeId]) REFERENCES [dbo].[EquipmentCode] ([Id]),
+    CONSTRAINT [FK_WorkOrder_WorkOrder] FOREIGN KEY ([FollowupParentId]) REFERENCES [dbo].[WorkOrder] ([Id]),
+    CONSTRAINT [FK_WorkOrder_Type] FOREIGN KEY ([TypeId]) REFERENCES [dbo].[Type] ([Id]),
+    CONSTRAINT [FK_WorkOrder_Tags] FOREIGN KEY ([TagsId]) REFERENCES [dbo].[Tags] ([Id])
+);
+
+
+
+
+CREATE TABLE [dbo].[WorkOrderHistory] (
+    [Id]              INT            IDENTITY (1, 1) NOT NULL,
+    [WorkOrderId]     INT            NULL,
+    [EquipmentCodeId] INT            NULL,
+    [OrderStatus]     NVARCHAR (255) NULL,
+    [UpdatedAt]       DATETIME       NULL,
+    [UpdatedBy]       INT            NULL,
+    [IsActive]        INT            NULL,
+    [CreatedAt]       DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_WorkOrderHistory_User] FOREIGN KEY ([UpdatedBy]) REFERENCES [dbo].[User] ([Id]),
+    CONSTRAINT [FK_WorkOrderHistory_WorkOrder] FOREIGN KEY ([WorkOrderId]) REFERENCES [dbo].[WorkOrder] ([Id])
+);
+
+GO
+
+CREATE TABLE [dbo].[Type] (
+    [Id]          INT            IDENTITY (1, 1) NOT NULL,
+    [TypeName]    NVARCHAR (255) NULL,
+    [ExtraFeild1] NVARCHAR (255) NULL,
+    [ExtraFeild2] NVARCHAR (255) NULL,
+    [ExtraFeild3] NVARCHAR (255) NULL,
+    [CreatedBy]   INT            NULL,
+    [IsActive]    INT            NULL,
+    [CreatedAt]   DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_CreatedBy_User] FOREIGN KEY ([CreatedBy]) REFERENCES [dbo].[User] ([Id])
+);
+
+GO
+
+CREATE TABLE [dbo].[Tags]
+(
+    [Id]        INT IDENTITY (1,1) NOT NULL ,
+    [TagName]   NVARCHAR (255) NULL,
+    [IsActive]  INT            NULL,
+    [CreatedAt] DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+GO
+
+CREATE TABLE [dbo].[TagsTask]
+(
+    [Id]        INT IDENTITY (1,1) NOT NULL ,
+    [TagsId]    INT            NULL,
+    [TaskId]    INT            NULL,
+    [IsActive]  INT            NULL,
+    [CreatedAt] DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_TagsId_TagsTask] FOREIGN KEY ([TagsId]) REFERENCES [dbo].[Tags] ([Id]),
+    CONSTRAINT [FK_TaskId_TagsTask] FOREIGN KEY ([TaskId]) REFERENCES [dbo].[MaintenanceTask] ([Id])
+);
+
+GO
+
+CREATE TABLE [dbo].[EquipmentCodeHistory] (
+    [Id]              INT            IDENTITY (1, 1) NOT NULL,
+    [WorkOrderId]     INT            NULL,
+    [EquipmentCodeId] INT            NULL,
+    [TaskId]          INT            NULL,
+    [Status]          NVARCHAR (MAX) NULL,
+    [IsActive]        INT            NULL,
+    [UpdatedBy]       INT            NULL,
+    [CreatedAt]       DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_EquipmentCodeHistory_User] FOREIGN KEY ([UpdatedBy]) REFERENCES [dbo].[User] ([Id]),
+    CONSTRAINT [FK_EquipmentCodeHistory_WorkOrder] FOREIGN KEY ([WorkOrderId]) REFERENCES [dbo].[WorkOrder] ([Id]),
+    CONSTRAINT [FK_EquipmentCodeHistory_Task] FOREIGN KEY ([TaskId]) REFERENCES [dbo].[MaintenanceTask] ([Id])
+);
+
+GO

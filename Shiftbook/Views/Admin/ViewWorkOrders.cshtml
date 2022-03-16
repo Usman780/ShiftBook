@@ -1,0 +1,520 @@
+﻿@using Shiftbook.Models
+@using Shiftbook.BL
+@using Shiftbook.Helping_Classes
+@{
+    DatabaseEntities de = new DatabaseEntities();
+
+    var identity = (System.Security.Claims.ClaimsPrincipal)System.Threading.Thread.CurrentPrincipal;
+    var id = identity.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+    User loggedinUser = new UserBL().GetUserById(Convert.ToInt32(id), de);
+}
+@{
+    ViewBag.Title = "View Work Orders";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<style>
+    .table > tbody > tr > td {
+        padding: 5px !important;
+    }
+</style>
+
+<img id="loadImg" src='../Content/assets/images/loading.gif' width='150' style="position:fixed; margin-top:20%; margin-left:35%; z-index:111; display:none" />
+
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-danger">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Warning</h3>
+            </div>
+            <div class="modal-body p-5">
+                <h6 class="text-semibold">
+                    Do you really want to Delete this?<br />
+                    This is going to permanently delete from our System.<br />
+                    This Action Cannot be Undone.
+                </h6>
+                <input type="hidden" name="id" id="TypeDeleteId" />
+            </div>
+            <div class="modal-footer border-top-1 border-top-grey-800 pt-10">
+                <button type="button" class="btn btn-link" data-dismiss="modal">No</button>
+                <a class="btn btn-danger" id="deleteId">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="text-center text-bold">Update user</h5>
+                <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="@Url.Action("PostUpdateUser","Admin")" method="post">
+
+                    <input type="hidden" name="Id" id="updId" />
+                    <input type="hidden" name="way" value="@ViewBag.Way" />
+
+                    <div class="form-group">
+                        <label class="text-bold">Department <span class="text-danger">*</span></label>
+                        <select class="select" required name="DepartmentId" id="updDepartment">
+                            <option value="">-- Select Department --</option>
+                            
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">First Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" required name="FName" id="updFName" placeholder="Please Enter First Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" required name="LName" id="updLName" placeholder="Please Enter Last Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">User Name</label>
+                        <input type="text" class="form-control" name="UserName" id="updUserName" placeholder="Please Enter User Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Language</label>
+                        <input type="text" class="form-control" name="Language" id="updLanguage" placeholder="Please Enter User Language">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Contact</label>
+                        <input type="text" class="form-control" name="Contact" id="updContact" placeholder="Please Enter User Contact Number">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Email <span class="text-danger">*</span></label>
+                        <input type="email" name="Email" id="updEmail" class="form-control" onkeyup="validateEmail(this.value)" placeholder="Add Email Here" required>
+                        <span class="text-danger" id="updEmailErrMsg"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class=""><input type="checkbox" name="Author" id="updAuthor" class="" value="1"> &nbsp; Is Author?</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-bold">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="Password" id="updPassword" class="form-control" placeholder="Set Login Password" required>
+                        <div class="input-group-addon">
+                            <input id="toggle" type="checkbox" class="pull-left"> <span id="toggleText" class="ml-5 pull-left">Show</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" value="submit" class="btn btn-primary" id="updSubBtn">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-flat text-black">
+                <div class="panel-heading" style="background: #e8eced ">
+                    <h2 class="text-center text-black">
+                        Search
+                    </h2>
+                    <div class="heading-elements">
+                        <ul class="icons-list">
+                            <li><a data-action="collapse" class="rotate-180"></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body pt-20 pb-20" style="display:none">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label><strong>Date:</strong></label>
+                                <input type="date" placeholder="" class="form-control" id="searchDate" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label><strong>Type:</strong></label>
+                                <select class="select" id="searchType">
+                                    <option value=""> All</option>
+                                    <option value="Electrical">Electrical</option>
+                                    <option value="Mechanical">Mechanical</option>
+                                    <option value="Electrical & Mechanical">Electrical & Mechanical</option>
+                                    <option value="E/I&C">E/I&C</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        @if (loggedinUser.Role == 1)
+                        {
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label><strong>Worker:</strong></label>
+                                    <input type="text" class="form-control" placeholder="" id="searchAuthor">
+                                </div>
+                            </div>
+                        }
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label><strong>Department:</strong></label>
+                                <input type="text" placeholder="" class="form-control" id="searchDepartment">
+                            </div>
+                        </div>
+
+                        @if (ViewBag.tags != null)
+                        {
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label><strong>Tags:</strong></label>
+                                <select class="select" id="searchTags">
+                                    <option value=""> All</option>
+                                    @foreach(var item in ViewBag.tags)
+                {
+                    <option value="@item.Id">@item.TagName</option>
+                }
+                                </select>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <button onclick="clearSearch()" class="btn btn-danger btn-block">Reset</button><br />
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12"></div>
+
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group text-right">
+                                <button onclick="searchTable()" class="btn btn-success btn-block">Search</button><br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-md-12">
+            <div class="panel panel-flat">
+                <div class="row text-center">
+                    @if (ViewBag.IsClose == 1)
+                    {
+                        <h3 class="text-center"><u>Closed Work Orders</u></h3>
+                        <div class="text-bold" style="color:@ViewBag.Color;" id="alertMsg">
+                            @ViewBag.Message
+                        </div>
+                    }
+                    else
+                    {
+                        <h3 class="text-center"><u>Work Orders</u></h3>
+                        <div class="text-bold" style="color:@ViewBag.Color;" id="alertMsg">
+                            @ViewBag.Message
+                        </div>
+                    }
+                </div>
+                <div class="panel-body">
+                    @if (loggedinUser.Role != 3)
+                    {
+                    <div class="row mb-10">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-2 pull-right">
+                            <a href="@Url.Action("AddWorkOrder", "Admin")" class="btn btn-block btn-primary pull-right">Add New</a>
+                        </div>
+                    </div>
+                    }
+
+                    <input type="hidden" id="way" value="@ViewBag.Way" />
+
+                    <input type="hidden" id="isClose" value="@ViewBag.IsClose" />
+                    <div class="table-responsive">
+                        <table class="table text-md-nowrap table-striped table-bordered text-center no-footer" id="orderTable">
+                            <thead class="bg-indigo">
+                                <tr>
+                                    <th class="text-bold" hidden>...</th>
+                                    <th class="text-bold text-center" style="min-width:200px">
+                                        Action
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Nr.
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Date/Time
+                                    </th>
+                                    @*<th class="text-bold text-center">
+                                        Type
+                                    </th>*@
+                                    <th class="text-bold text-center">
+                                        Location
+                                    </th>
+                                    <th class="text-bold text-center">
+                                        Worker
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    var way = $('#way').val();
+
+    loadTable();
+
+    function loadTable(date, type, author, department, tag)
+    {
+        $('#orderTable').DataTable(
+        {
+            "ajax":
+            {
+                "url": '@Url.Action("GetWorkOrderDataTableList", "Ajax")',
+                "type": "POST",
+                "datatype": "json",
+                "data": {
+                    isClose: $('#isClose').val(),
+                    date: date,
+                    type: type,
+                    author: author,
+                    department: department,
+                    tag: tag
+                }
+            },
+            'columns':
+            [
+                { "data": "hidden", "name": "0" },
+                { "data": "Action", "name": "0" },
+                { "data": "Count", "name": "Id" },
+                { "data": "OrderDateTime", "name": "OrderDateTime" },
+                //{ "data": "OrderType", "name": "TypeId" },
+                { "data": "Entry", "name": "Location" },
+                { "data": "User", "name": "User" },
+            ],
+            'columnDefs':
+            [
+                {
+                    "targets": 0,
+                    "visible": false,
+                    "searchable": false,
+                    "render": function (data, type, full, meta) {
+                        return null;
+                    }
+                },
+                {
+                    "targets": 1,
+                    'className': 'col-md-1',
+                    'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                        if (full.Role != 3) {
+                            return '<div class="btn-group" role="group">' +
+                                '<a href="../Details?Id=' + full.EncId + '" class="btn btn-success" title="Details"><b><i class="icon-file-eye2"></i></b></a>' +
+                                '<a href="../Admin/UpdateWorkOrder?eId=' + full.EncId + '" class="btn btn-info" title="Edit"><i class="icon-pencil"></i></a>' +
+                                '<a onclick="deleteFunction(' + full.Id + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-floppy-remove"></i></a>' +
+                                '</div>';
+                        }
+                        else {
+                            return '<div class="btn-group" role="group">' +
+                                '<a href="../Details?Id=' + full.EncId + '" class="btn btn-success" title="Details"><b><i class="icon-file-eye2"></i></b></a>' +
+                                '<a href="../Admin/UpdateWorkOrder?eId=' + full.EncId + '" class="btn btn-info" title="Edit"><i class="icon-pencil"></i></a>' +
+                                //'<a onclick="deleteFunction(' + full.Id + ')" class="btn btn-danger" title="Delete" data-toggle="modal" data-target="#deleteModal"><i class="glyphicon glyphicon-floppy-remove"></i></a>' +
+                                '</div>';
+                        }
+                    }
+                },
+                {
+                    "targets": 2,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        return full.Count;
+                    }
+                },
+                {
+                    "targets": 3,
+                    'className': '',
+                    "render": function (data, type, full, meta)
+                    {
+                        return full.OrderDateTime ;
+                    }
+                },
+                //{
+                //    "targets": 4,
+                //    'className': '',
+                //    "render": function (data, type, full, meta) {
+                //        if ($.trim(full.OrderType) == "") {
+                //            return '<span class="text-danger">---</span>';
+                //        }
+                //        else {
+                //            return full.OrderType;
+                //        }
+                //    }
+                //},
+                {
+                    "targets": 4,
+                    'className': '',
+                    //'sortable': false,
+                    "render": function (data, type, full, meta)
+                    {
+                        var loc = full.Location;
+                        if ($.trim(full.Location) == "")
+                        {
+                            loc = '<span class="text-danger">---</span>';
+                        }
+                        return loc;
+
+                        //var sts = '<span class="text-success">Opened</span>';
+                        //if (full.IsClosed == 1)
+                        //{
+                        //    sts = '<span class="text-danger">Closed</span>';
+                        //}
+                        //var files = "";
+                        //if ($.trim(full.File1Path) != "")
+                        //{
+                        //    if (getExtension(full.File1Path) == "png" || getExtension(full.File1Path) == "jpg" || getExtension(full.File1Path) == "jpeg" || getExtension(full.File1Path) == "gif") {
+                        //        files += '<a href="' + full.File1Path + '" download><img src="' + full.File1Path + '" style="width:100px; height:100px;"/></a> <br>'
+                        //    }
+                        //    else {
+                        //        files += '<a href="' + full.File1Path + '" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 1</a> <br>';
+                        //    }
+                        //}
+                        //if ($.trim(full.File2Path) != "") {
+                        //    if (getExtension(full.File2Path) == "png" || getExtension(full.File2Path) == "jpg" || getExtension(full.File2Path) == "jpeg" || getExtension(full.File2Path) == "gif") {
+                        //        files += '<a href="' + full.File2Path + '" download><img src="' + full.File2Path + '" style="width:100px; height:100px;"/></a> <br>'
+                        //    }
+                        //    else {
+                        //        files += '<a href="' + full.File2Path + '" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 2</a> <br>';
+                        //    }
+                        //}
+                        //if ($.trim(full.File3Path) != "") {
+                        //    if (getExtension(full.File3Path) == "png" || getExtension(full.File3Path) == "jpg" || getExtension(full.File3Path) == "jpeg" || getExtension(full.File3Path) == "gif") {
+                        //        files += '<a href="' + full.File3Path + '" download><img src="' + full.File3Path + '" style="width:100px; height:100px;"/></a> <br>'
+                        //    }
+                        //    else {
+                        //        files += '<a href="' + full.File3Path + '" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 3</a> <br>';
+                        //    }
+                        //}
+                        //if ($.trim(full.File4Path) != "") {
+                        //    if (getExtension(full.File4Path) == "png" || getExtension(full.File4Path) == "jpg" || getExtension(full.File4Path) == "jpeg" || getExtension(full.File4Path) == "gif") {
+                        //        files += '<a href="' + full.File4Path + '" download><img src="' + full.File4Path + '" style="width:100px; height:100px;"/></a> <br>'
+                        //    }
+                        //    else {
+                        //        files += '<a href="' + full.File4Path + '" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 4</a> <br>';
+                        //    }
+                        //}
+                        //if ($.trim(full.File5Path) != "") {
+                        //    if (getExtension(full.File5Path) == "png" || getExtension(full.File5Path) == "jpg" || getExtension(full.File5Path) == "jpeg" || getExtension(full.File5Path) == "gif") {
+                        //        files += '<a href="' + full.File5Path + '" download><img src="' + full.File5Path + '" style="width:100px; height:100px;"/></a> <br>'
+                        //    }
+                        //    else {
+                        //        files += '<a href="' + full.File5Path + '" download><i style="font-size:0.7em;" class="icon-download4"></i> &nbsp;&nbsp; File 5</a> <br>';
+                        //    }
+                        //}
+
+                        //if (files == "") {
+                        //    files = '<span class="text-danger">---</span>';
+                        //}
+
+                        //return '<b>Location</b> <br>' +
+                        //    loc + '<br><br>' +
+                        //    '<b>Work Order</b> <br>' +
+                        //    full.TaskDescription + '<br><br>' +
+                        //    '<b>Files</b> <br>' +
+                        //    files + '<br>' +
+                        //    '<b>Status</b> <br>' +
+                        //    sts;
+                    }
+                },
+                {
+                    "targets": 5,
+                    'className': '',
+                    "render": function (data, type, full, meta) {
+                        if ($.trim(full.UserName) == "") {
+                            return '<span class="text-danger">---</span>';
+                        }
+                        else {
+                            return full.UserName;
+                        }
+                    }
+                },
+            ],
+            "serverSide": "true",
+            "processing": "true",
+            "language":
+            {
+                "processing": "<i class='icon-spinner spinner icon-2x'></i>",
+                "search": "<span>Search :</span> _INPUT_",
+                "searchPlaceholder": "Filter",
+                "lengthMenu": "<span>Show :</span> _MENU_",
+                "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            },
+        });
+    }
+
+    function searchTable()
+    {
+        var date = $('#searchDate').val();
+        var type = $('#searchType').val();
+        var author = $('#searchAuthor').val();
+        var department = $('#searchDepartment').val();
+        var tag = $('#searchTags').val();
+
+        $('#orderTable').DataTable().clear();
+        $('#orderTable').DataTable().destroy();
+
+        loadTable(date, type, author, department, tag);
+    }
+
+    function clearSearch()
+    {
+        $('#orderTable').DataTable().clear();
+        $('#orderTable').DataTable().destroy();
+
+        $('#searchDate').val("");
+        $('#searchType').val("").change();
+        $('#searchAuthor').val("");
+        $('#searchDepartment').val("");
+        $('#searchTags').val("").change();
+
+        loadTable();
+    }
+
+
+    function getExtension(str)
+    {
+        var n = str.lastIndexOf('.');
+        var result = str.substring(n + 1);
+
+        return result;
+    }
+
+    function deleteFunction(id)
+    {
+        var a = document.getElementById('deleteId');
+        a.href = "../Admin/DeleteWorkOrder?id=" + id + "&way=@ViewBag.Way";
+    }
+
+</script>
+
+

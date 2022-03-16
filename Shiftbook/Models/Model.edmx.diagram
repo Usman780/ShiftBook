@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="6bdf4a41b6ea446a91a7bdcbfb3d6929" Name="Diagram1">
+        <EntityTypeShape EntityType="DatabaseModel.Department" Width="1.5" PointX="0.75" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DatabaseModel.EquipmentCode" Width="1.5" PointX="3" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DatabaseModel.MaintenanceTask" Width="1.5" PointX="3" PointY="11.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DatabaseModel.User" Width="1.5" PointX="3" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DatabaseModel.WorkOrder" Width="1.5" PointX="5.25" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DatabaseModel.WorkOrderHistory" Width="1.5" PointX="7.5" PointY="3" IsExpanded="true" />
+        <AssociationConnector Association="DatabaseModel.FK_User_Department" ManuallyRouted="false" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrder_Department" ManuallyRouted="false" />
+        <AssociationConnector Association="DatabaseModel.FK_MaintenanceTask_EquipmentCode" ManuallyRouted="false" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrder_EquipmentCode" ManuallyRouted="false" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrder_MaintenanceTask" ManuallyRouted="false" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrder_User" ManuallyRouted="false" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrderHistory_User" ManuallyRouted="false" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrder_WorkOrder" ManuallyRouted="false" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrderHistory_WorkOrder" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="DatabaseModel.Type" Width="1.5" PointX="5.25" PointY="9.125" />
+        <AssociationConnector Association="DatabaseModel.FK_CreatedBy_User" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrder_Type" />
+        <EntityTypeShape EntityType="DatabaseModel.Tag" Width="1.5" PointX="7.375" PointY="6.75" />
+        <EntityTypeShape EntityType="DatabaseModel.TagsTask" Width="1.5" PointX="9.625" PointY="10.375" />
+        <AssociationConnector Association="DatabaseModel.FK_TaskId_TagsTask" />
+        <AssociationConnector Association="DatabaseModel.FK_TagsId_TagsTask" />
+        <AssociationConnector Association="DatabaseModel.FK_WorkOrder_Tags" />
+        <EntityTypeShape EntityType="DatabaseModel.EquipmentCodeHistory" Width="1.5" PointX="10.5" PointY="6.375" />
+        <AssociationConnector Association="DatabaseModel.FK_EquipmentCodeHistory_Task" />
+        <AssociationConnector Association="DatabaseModel.FK_EquipmentCodeHistory_User" />
+        <AssociationConnector Association="DatabaseModel.FK_EquipmentCodeHistory_WorkOrder" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

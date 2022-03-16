@@ -1,0 +1,147 @@
+﻿@using Shiftbook.Models
+@using Shiftbook.BL
+@using Shiftbook.Helping_Classes
+@{
+    DatabaseEntities de = new DatabaseEntities();
+
+    var identity = (System.Security.Claims.ClaimsPrincipal)System.Threading.Thread.CurrentPrincipal;
+    var id = identity.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+    User loggedinUser = new UserBL().GetUserById(Convert.ToInt32(id), de);
+}
+@{
+    ViewBag.Title = "Add New User";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+
+<div class="p-20">
+    
+    <div class="row">
+        <form action="@Url.Action("PostAddUser", "Admin")" method="post">
+
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-flat">
+                        <div class="panel-heading">
+                            <h2 class="panel-title text-center text-bold">New User</h2>
+                            <div class="text-center" id="alertMsg" style="color:@ViewBag.Color ; font-weight:bold">
+                                @ViewBag.Message
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                        <legend class="text-bold text-uppercase"><span class="text-danger">*</span> Fields are mandatory to fill</legend>
+                            
+                        <div class="form-group">
+                            <label class="text-bold">Department <span class="text-danger">*</span></label>
+                            <select class="select" required name="DepartmentId">
+                                <option value="">-- Select Department --</option>
+                                @foreach(Department d in ViewBag.Departments)
+                                {
+                                    <option value="@d.Id">@d.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">First Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" required name="FName" placeholder="Enter First Name">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" required name="LName" placeholder="Enter Last Name">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Username</label>
+                                <input type="text" class="form-control" name="UserName" placeholder="Enter Username">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Language</label>
+                                <input type="text" class="form-control" name="Language" placeholder="Enter User Language">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Contact</label>
+                                <input type="text" class="form-control" name="Contact" placeholder="Enter User Contact Number">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Email <span class="text-danger">*</span></label>
+                                <input type="email" name="Email" class="form-control" onkeyup="validateEmail(this.value)" placeholder="Add Email Here" required>
+                                <span class="text-danger" id="emailErrMsg"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-bold">Role <span class="text-danger">*</span></label>
+                                <select name="Role" class="form-control" required>
+                                    <option value="">-- Select Role --</option>
+                                    <option value="1">Administrator</option>
+                                    <option value="2">Manager</option>
+                                    <option value="3">User</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class=""><input type="checkbox" name="Author" class="" value="1"> &nbsp; Is Author?</label>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="text-bold ">Password: <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" autocomplete="new-password" placeholder="Your Password" required name="Password" id="password">
+                                    <span class="input-group-btn" style="padding-left:0px;">
+                                        <button class="btn btn-default" onclick="ShowPasswords(1)" type="button" style="display:block" id="SignupShowPassword">Show</button>
+                                        <button class="btn btn-default" onclick="ShowPasswords(1)" type="button" style="display:none" id="SignupHidePassword">Hide</button>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="text-right">
+                                <button type="submit" id="subBtn" class="btn btn-primary">Add <i class="icon-database-insert position-right"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+    function validateEmail(email) {
+        if (email != "") {
+            $.ajax({
+                type: 'POST',
+                url: "../Ajax/ValidateEmail",
+                dataType: "json",
+                data: {
+                    email: email, id: -1
+                },
+                success: function (response) {
+                    if (response == true) {
+                        $('#emailErrMsg').text("");
+                        $('#subBtn').attr('disabled', false);
+                    }
+                    else {
+                        $('#emailErrMsg').text("Duplicate Email");
+                        $('#subBtn').attr('disabled', true);
+                    }
+                },
+                error: function () {
+                    $('#emailErrMsg').text("");
+                    $('#subBtn').attr('disabled', false);
+                    alert("Ajax failed");
+                }
+            });
+        }
+
+    }
+</script>

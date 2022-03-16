@@ -1,0 +1,192 @@
+//public ActionResult UploadBulkVehicles(FormCollection formCollection)
+        //{
+        //    DatabaseEntities dc = new DatabaseEntities();
+        //    if (Request != null)
+        //    {
+        //        using(var context = new DatabaseEntities())
+        //        {
+        //            context.Database.Log = Console.Write;
+        //            using(DbContextTransaction transaction = context.Database.BeginTransaction())
+        //            {
+        //                try
+        //                {
+        //                    List<Vehicle> listvehicle = new VehicleBL().GetActiveVehicleList(de).Where(x => x.IsActive == 1).ToList();
+        //                    HttpPostedFileBase file = Request.Files["UploadedFile"];
+        //                    if ((file != null && file.ContentLength > 0 && !string.IsNullOrEmpty(file.FileName)))
+        //                    {
+        //                        string fileName = file.FileName;
+        //                        string fileContentType = file.ContentType;
+        //                        byte[] filebytes = new byte[file.ContentLength];
+        //                        var data = file.InputStream.Read(filebytes, 0, Convert.ToInt32(file.ContentLength));
+
+        //                        var suppleirList = new List<Vehicle>();
+        //                        List<string> VinNumbers = new List<string>();
+
+        //                        using (var package = new ExcelPackage(file.InputStream))
+        //                        {
+        //                            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //                            var currentSheet = package.Workbook.Worksheets;
+        //                            var workSheet = currentSheet.First();
+        //                            var noOfColumns = workSheet.Dimension.End.Column;
+        //                            var noOfRows = workSheet.Dimension.End.Row;
+
+        //                            for (int rowIterator = 2; rowIterator <= noOfRows; rowIterator++)
+        //                            {
+        //                                if (workSheet.Cells[rowIterator, 1] == null)//can this be null?
+        //                                {
+        //                                    break; //if it's null exit from the for loop
+        //                                }
+
+        //                                var valueChecking = workSheet.Cells[rowIterator, 2].Value.ToString();
+        //                                valueChecking = valueChecking.Trim(' ');
+        //                                var RemoveRegexActualPrice = workSheet.Cells[rowIterator, 10].Value.ToString();
+        //                                var RemoveRegex = workSheet.Cells[rowIterator, 11].Value.ToString();
+        //                                string removedollarFromActualPrice = "";
+        //                                string removedollarFromAPrice = "";
+
+        //                                if (RemoveRegexActualPrice != null && !string.IsNullOrWhiteSpace(RemoveRegexActualPrice))
+        //                                {
+        //                                    var replace = RemoveRegexActualPrice.Replace(",", "");
+        //                                    var removed = replace.Replace("$", "");
+        //                                    int position = removed.IndexOf(".");
+        //                                    if (position >= 0)
+        //                                    {
+        //                                        removedollarFromActualPrice = removed.Remove(position);
+        //                                    }
+        //                                }
+
+        //                                if (RemoveRegex != null && !string.IsNullOrWhiteSpace(RemoveRegex))
+        //                                {
+        //                                    var replace = RemoveRegex.Replace(",", "");
+        //                                    var removed = replace.Replace("$", "");
+        //                                    int position = removed.IndexOf(".");
+        //                                    if (position >= 0)
+        //                                    {
+        //                                        removedollarFromAPrice = removed.Remove(position);
+        //                                    }
+        //                                }
+        //                                if (workSheet.Cells[rowIterator, 2] != null)
+        //                                {
+        //                                    //Vehicle v = new VehicleBL().GetActiveVehicleList(de).Where(x => x.IsActive == 1 && x.Vin==valueChecking).FirstOrDefault();
+        //                                    Vehicle v = listvehicle.Where(x => x.IsActive == 1 && x.Vin==valueChecking).FirstOrDefault();
+        //                                    if (v == null)
+        //                                    {
+        //                                        var claim = new Vehicle();
+
+        //                                        claim.Description = workSheet.Cells[rowIterator, 1].Value == null ? string.Empty : workSheet.Cells[rowIterator, 1].Value.ToString();
+        //                                        claim.Vin = workSheet.Cells[rowIterator, 2].Value == null ? string.Empty : workSheet.Cells[rowIterator, 2].Value.ToString();
+        //                                        claim.Trim = workSheet.Cells[rowIterator, 3].Value == null ? string.Empty : workSheet.Cells[rowIterator, 3].Value.ToString();
+        //                                        claim.Type = workSheet.Cells[rowIterator, 4].Value == null ? string.Empty : workSheet.Cells[rowIterator, 4].Value.ToString();
+        //                                        claim.Drive = workSheet.Cells[rowIterator, 5].Value == null ? string.Empty : workSheet.Cells[rowIterator, 5].Value.ToString();
+        //                                        claim.Transmission = workSheet.Cells[rowIterator, 6].Value == null ? string.Empty : workSheet.Cells[rowIterator, 6].Value.ToString();
+        //                                        claim.Cylinders = workSheet.Cells[rowIterator, 7].Value == null ? string.Empty : workSheet.Cells[rowIterator, 7].Value.ToString();
+        //                                        claim.Colour = workSheet.Cells[rowIterator, 8].Value == null ? string.Empty : workSheet.Cells[rowIterator, 8].Value.ToString();
+        //                                        claim.Odometer = workSheet.Cells[rowIterator, 9].Value == null ? string.Empty : workSheet.Cells[rowIterator, 9].Value.ToString();
+        //                                        //claim.ActualCash = workSheet.Cells[rowIterator, 10].Value == null ? string.Empty : workSheet.Cells[rowIterator, 10].Value.ToString();
+        //                                        claim.ActualCash = removedollarFromActualPrice;
+        //                                        //claim.Price = workSheet.Cells[rowIterator, 11].Value == null ? string.Empty : workSheet.Cells[rowIterator, 11].Value.ToString();
+        //                                        claim.Price = removedollarFromAPrice;
+        //                                        claim.Stock = workSheet.Cells[rowIterator, 12].Value == null ? string.Empty : workSheet.Cells[rowIterator, 12].Value.ToString();
+        //                                        claim.Key = workSheet.Cells[rowIterator, 13].Value == null ? string.Empty : workSheet.Cells[rowIterator, 13].Value.ToString();
+        //                                        claim.CertAsIs = workSheet.Cells[rowIterator, 14].Value == null ? string.Empty : workSheet.Cells[rowIterator, 14].Value.ToString();
+        //                                        claim.Status = workSheet.Cells[rowIterator, 15].Value == null ? string.Empty : workSheet.Cells[rowIterator, 15].Value.ToString();
+        //                                        claim.Other = workSheet.Cells[rowIterator, 16].Value == null ? string.Empty : workSheet.Cells[rowIterator, 16].Value.ToString();
+        //                                        claim.IsActive = 1;
+        //                                        claim.CreatedAt = DateTime.Now;
+        //                                        claim.CreatedBy = General_Purpose.validateUser().Id;
+        //                                        //suppleirList.Add(claim);
+        //                                        if (!new VehicleBL().AddVehicle(claim, context))
+        //                                        {
+        //                                            throw new Exception();
+        //                                            //return RedirectToAction("VehiclesList", "Vehicle", new { errormsg = "Sorry for Inconvience, This File Cannot Upload Properly" });
+        //                                        }
+        //                                    }
+        //                                    else
+        //                                    {
+        //                                        Vehicle vehicle = new Vehicle()
+        //                                        {
+        //                                            Id = v.Id,
+        //                                            Description = workSheet.Cells[rowIterator, 1].Value == null ? string.Empty : workSheet.Cells[rowIterator, 1].Value.ToString(),
+        //                                            Vin = workSheet.Cells[rowIterator, 2].Value == null ? string.Empty : workSheet.Cells[rowIterator, 2].Value.ToString(),
+        //                                            Trim = workSheet.Cells[rowIterator, 3].Value == null ? string.Empty : workSheet.Cells[rowIterator, 3].Value.ToString(),
+        //                                            Type = workSheet.Cells[rowIterator, 4].Value == null ? string.Empty : workSheet.Cells[rowIterator, 4].Value.ToString(),
+        //                                            Drive = workSheet.Cells[rowIterator, 5].Value == null ? string.Empty : workSheet.Cells[rowIterator, 5].Value.ToString(),
+        //                                            Transmission = workSheet.Cells[rowIterator, 6].Value == null ? string.Empty : workSheet.Cells[rowIterator, 6].Value.ToString(),
+        //                                            Cylinders = workSheet.Cells[rowIterator, 7].Value == null ? string.Empty : workSheet.Cells[rowIterator, 7].Value.ToString(),
+        //                                            Colour = workSheet.Cells[rowIterator, 8].Value == null ? string.Empty : workSheet.Cells[rowIterator, 8].Value.ToString(),
+        //                                            Odometer = workSheet.Cells[rowIterator, 9].Value == null ? string.Empty : workSheet.Cells[rowIterator, 9].Value.ToString(),
+        //                                            //ActualCash = workSheet.Cells[rowIterator, 10].Value == null ? string.Empty : workSheet.Cells[rowIterator, 10].Value.ToString();
+        //                                            ActualCash = removedollarFromActualPrice,
+        //                                            //Price = workSheet.Cells[rowIterator, 11].Value == null ? string.Empty : workSheet.Cells[rowIterator, 11].Value.ToString();
+        //                                            Price = removedollarFromAPrice,
+        //                                            Stock = workSheet.Cells[rowIterator, 12].Value == null ? string.Empty : workSheet.Cells[rowIterator, 12].Value.ToString(),
+        //                                            Key = workSheet.Cells[rowIterator, 13].Value == null ? string.Empty : workSheet.Cells[rowIterator, 13].Value.ToString(),
+        //                                            CertAsIs = workSheet.Cells[rowIterator, 14].Value == null ? string.Empty : workSheet.Cells[rowIterator, 14].Value.ToString(),
+        //                                            Status = workSheet.Cells[rowIterator, 15].Value == null ? string.Empty : workSheet.Cells[rowIterator, 15].Value.ToString(),
+        //                                            Other = workSheet.Cells[rowIterator, 16].Value == null ? string.Empty : workSheet.Cells[rowIterator, 16].Value.ToString(),
+        //                                            VStatus = v.VStatus,
+        //                                            VInspection = v.VInspection,
+        //                                            VSafety = v.VSafety,
+        //                                            VCleaning = v.VCleaning,
+        //                                            VVendor = v.VVendor,
+        //                                            CSendToVendor = v.CSendToVendor,
+        //                                            CLocatedAtVendor = v.CLocatedAtVendor,
+        //                                            VBodyRepair = v.VBodyRepair,
+        //                                            BRSendToVendor = v.BRSendToVendor,
+        //                                            BRLocatedAtVendor = v.BRLocatedAtVendor,
+        //                                            VPicturesField = v.VPicturesField,
+        //                                            IsActive = v.IsActive,
+        //                                            CreatedAt = v.CreatedAt,
+        //                                            CreatedBy = v.CreatedBy,
+        //                                        };
+        //                                        if (!new VehicleBL().UpdateVehicle(vehicle, context))
+        //                                        {
+        //                                            throw new Exception();
+        //                                            //return RedirectToAction("VehiclesList", "Vehicle", new { errormsg = "Sorry for Inconvience, This File Cannot Upload Properly" });
+        //                                        }
+        //                                    }
+
+        //                                    VinNumbers.Add(valueChecking);
+        //                                }
+        //                            }
+        //                            DatabaseEntities db = new DatabaseEntities();
+        //                            List<Vehicle> list = new VehicleBL().GetActiveVehicleList(de).Where(x => x.IsActive == 1).ToList();
+        //                            foreach (Vehicle item in list)
+        //                            {
+        //                                if (!VinNumbers.Contains(item.Vin))
+        //                                {
+        //                                    Vehicle vehicle = new VehicleBL().GetVehiclebyId(item.Id, db);
+        //                                    //Vehicle vehicle = new Vehicle()
+        //                                    //{
+        //                                    //    Id = item.Id,
+        //                                    //    IsActive = 0,
+        //                                    //    CreatedAt = item.CreatedAt,
+        //                                    //};
+        //                                    vehicle.IsActive = 0;
+
+        //                                    if (!new VehicleBL().DeletesVehicle(vehicle, db))
+        //                                    {
+        //                                        return RedirectToAction("VehiclesList", "Vehicle", new { errormsg = "Sorry for Inconvience, This File Cannot Upload Properly" });
+        //                                    }
+
+        //                                }
+
+        //                            }
+        //                        }
+        //                        transaction.Commit();
+        //                    }
+        //                    else
+        //                    {
+        //                        throw new Exception();
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    transaction.Rollback();
+        //                    return RedirectToAction("VehiclesList", "Vehicle", new { errormsg = "File Cannot Be Uploaded Successfully" });
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return RedirectToAction("VehiclesList", "Vehicle", new { successfullmsg = "File Uploaded Successfully" });
+        //}
